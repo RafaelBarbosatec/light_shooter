@@ -30,7 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  bonfire: ^2.9.0
+  bonfire: ^2.9.1
 
 dev_dependencies:
   flutter_test:
