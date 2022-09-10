@@ -65,7 +65,7 @@ class BulletCapsule extends GameComponent
   void _removeCapsule() {
     removing = true;
     add(
-      BonfireOpacityEffect.fadeOut(
+      OpacityEffect.fadeOut(
         EffectController(
           duration: 0.1,
           alternate: true,
