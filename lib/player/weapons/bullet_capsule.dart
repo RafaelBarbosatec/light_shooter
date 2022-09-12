@@ -34,19 +34,13 @@ class BulletCapsule extends GameComponent
 
   @override
   void onMount() {
-    applyAccelerationByAngle(reduction, angle, stopWhenSpeedZero: true);
+    applyAccelerationByAngle(
+      reduction,
+      angle,
+      stopWhenSpeedZero: true,
+      onStop: _removeCapsule,
+    );
     super.onMount();
-  }
-
-  @override
-  void update(double dt) {
-    if (speed == 0 && !removing) {
-      if (checkInterval('REMOVE_BULLET', 2000, dt, firstCheckIsTrue: false)) {
-        _removeCapsule();
-      }
-    }
-
-    super.update(dt);
   }
 
   @override
@@ -70,6 +64,7 @@ class BulletCapsule extends GameComponent
           duration: 0.1,
           alternate: true,
           repeatCount: 3,
+          startDelay: 1,
         ),
         onComplete: removeFromParent,
       ),
