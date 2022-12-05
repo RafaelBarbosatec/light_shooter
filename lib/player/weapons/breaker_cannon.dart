@@ -9,17 +9,18 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   double dt = 0;
   bool flipByShot = false;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
-  BreakerCannon() {
+  BreakerCannon(GameComponent target) {
     size = Vector2.all(64);
-    setupFollower(offset: Vector2(0, 16));
+    setupFollower(offset: Vector2(0, 16),target: target);
   }
 
   @override
   void update(double dt) {
     this.dt = dt;
     if (!flipByShot) {
-      isFlipHorizontal = (followerTarget as Movement).lastDirectionHorizontal !=
-          Direction.right;
+      isFlipHorizontally =
+          (followerTarget as Movement).lastDirectionHorizontal !=
+              Direction.right;
     }
     flipByShot = false;
 
@@ -68,7 +69,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
 
   void changeAngle(double radAngle) {
     _verifyFlip(radAngle);
-    angle = radAngle + ((isFlipHorizontal && radAngle != 0) ? pi : 0);
+    angle = radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
   }
 
   void _verifyFlip(double radAngle) {
@@ -81,7 +82,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
     }
 
     if ((followerTarget as Movement).lastDirectionHorizontal != shotDirection) {
-      isFlipHorizontal = true;
+      isFlipHorizontally = true;
       flipByShot = true;
     }
   }

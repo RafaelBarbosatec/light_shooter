@@ -43,7 +43,7 @@ class Breaker extends SimplePlayer with ObjectCollision {
 
   @override
   void onMount() {
-    add(gun = BreakerCannon());
+    gameRef.add(gun = BreakerCannon(this));
     super.onMount();
   }
 
