@@ -7,22 +7,17 @@ import 'package:light_shooter/util/player_spritesheet.dart';
 
 class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   double dt = 0;
-  bool flipByShot = false;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
   BreakerCannon(GameComponent target) {
     size = Vector2.all(64);
-    setupFollower(offset: Vector2(0, 16),target: target);
+    setupFollower(offset: Vector2(0, 16), target: target);
   }
 
   @override
   void update(double dt) {
     this.dt = dt;
-    if (!flipByShot) {
-      isFlipHorizontally =
-          (followerTarget as Movement).lastDirectionHorizontal !=
-              Direction.right;
-    }
-    flipByShot = false;
+    isFlipHorizontally =
+        (followerTarget as Movement).lastDirectionHorizontal != Direction.right;
 
     super.update(dt);
   }
@@ -68,23 +63,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   }
 
   void changeAngle(double radAngle) {
-    _verifyFlip(radAngle);
     angle = radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
-  }
-
-  void _verifyFlip(double radAngle) {
-    Direction shotDirection = Direction.right;
-    Direction angleDirection = BonfireUtil.getDirectionFromAngle(radAngle);
-    if (angleDirection == Direction.left ||
-        angleDirection == Direction.upLeft ||
-        angleDirection == Direction.downLeft) {
-      shotDirection = Direction.left;
-    }
-
-    if ((followerTarget as Movement).lastDirectionHorizontal != shotDirection) {
-      isFlipHorizontally = true;
-      flipByShot = true;
-    }
   }
 
   double _getAnglecapsule(double radAngle) {
