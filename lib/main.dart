@@ -37,10 +37,11 @@ class Game extends StatelessWidget {
             enableDirection: true,
           ),
           JoystickAction(
-              actionId: 2,
-              margin:
-                  const EdgeInsets.all(50) + const EdgeInsets.only(right: 100),
-              color: Colors.yellow),
+            actionId: 2,
+            margin:
+                const EdgeInsets.all(50) + const EdgeInsets.only(right: 100),
+            color: Colors.yellow,
+          ),
         ],
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
