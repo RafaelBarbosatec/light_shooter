@@ -1,7 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
-import 'package:light_shooter/player/weapons/breaker_cannon.dart';
-import 'package:light_shooter/util/player_spritesheet.dart';
+import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
+import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   BreakerCannon? gun;

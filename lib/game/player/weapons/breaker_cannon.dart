@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
-import 'package:light_shooter/player/weapons/bullet_capsule.dart';
-import 'package:light_shooter/util/player_spritesheet.dart';
+import 'package:light_shooter/game/player/weapons/bullet_capsule.dart';
+import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   double dt = 0;
