@@ -1,6 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/breaker.dart';
+import 'package:light_shooter/shared/bootstrap.dart';
 
 class Game extends StatelessWidget {
   const Game({Key? key}) : super(key: key);
@@ -26,7 +27,10 @@ class Game extends StatelessWidget {
         ],
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
-      player: Breaker(position: Vector2.all(96)),
+      player: Breaker(
+        position: Vector2.all(96),
+        websocketClient: inject(),
+      ),
       cameraConfig: CameraConfig(
         zoom: 1.5,
         smoothCameraEnabled: true,
