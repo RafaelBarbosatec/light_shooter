@@ -13,7 +13,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   }) : super(
           size: Vector2.all(64),
           animation: PlayerSpriteSheet.animation,
-          speed: 100,
+          speed: 60,
         ) {
     enableMouseGesture = enabledMouse;
     setupCollision(
@@ -40,6 +40,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
     }
     if (event.id == 2 && event.event == ActionEvent.DOWN) {
       gun?.reload();
+      animation?.playOther('talk');
     }
     super.joystickAction(event);
   }
