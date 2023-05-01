@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
-import 'package:nakama/rtapi.dart' as rt;
+// ignore: depend_on_referenced_packages
+import 'package:nakama/nakama.dart';
 
 class RoomMatchPage extends StatefulWidget {
   const RoomMatchPage({super.key});
@@ -15,7 +16,7 @@ class RoomMatchPage extends StatefulWidget {
 class _RoomMatchPageState extends State<RoomMatchPage> {
   late WebsocketClient _websocketClient;
   StreamSubscription? onMatchmakerMatchedSubscription;
-  rt.MatchmakerTicket? matchmakerTicket;
+  MatchmakerTicket? matchmakerTicket;
   @override
   void initState() {
     _websocketClient = inject();
@@ -63,7 +64,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     });
   }
 
-  void _onMatchmaker(rt.MatchmakerMatched event) {
+  void _onMatchmaker(MatchmakerMatched event) {
     _websocketClient.joinMatch(event).then((value) {
       if (mounted) {
         Navigator.pushNamed(context, '/game');

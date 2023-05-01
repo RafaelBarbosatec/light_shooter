@@ -61,10 +61,10 @@ packages:
     dependency: transitive
     description:
       name: chopper
-      sha256: "813cabd029ad8c020874429a671f2c15f45cfc3ced66b566bfa181a9b61b89b8"
+      sha256: "27cfb2aa601f591b6d041528b4e15827231cf1774227485ba96928a0ebf26265"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "5.2.0"
   clock:
     dependency: transitive
     description:
@@ -139,6 +139,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: aeac15850ef1b38ee368d4c53ba9a847e900bb2c53a4db3f6881cbb3cb684338
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   get_it:
     dependency: "direct dev"
     description:
@@ -254,11 +262,12 @@ packages:
   nakama:
     dependency: "direct dev"
     description:
-      name: nakama
-      sha256: d54aae5c0b6752c36fe6e18606134d7c1c939928fad39df76d72a0f8326255b2
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.6"
+      path: "."
+      ref: refresh-token-can-be-null
+      resolved-ref: ef23b084582174888f880b688ec3051039de2db0
+      url: "https://github.com/RafaelBarbosatec/flutter_nakama.git"
+    source: git
+    version: "1.0.0-dev.6"
   ordered_set:
     dependency: transitive
     description:

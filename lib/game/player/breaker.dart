@@ -1,6 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
+import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
@@ -8,8 +9,10 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
+  final String id;
   WebsocketClient websocketClient;
   Breaker({
+    required this.id,
     required super.position,
     required this.websocketClient,
     this.enabledMouse = false,
@@ -89,7 +92,17 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
 
   @override
   void onMove(double speed, Direction direction, double angle) {
-    websocketClient.sendMatchData(0, direction.name);
+    if (direction != lastDirection) {
+      websocketClient.sendMatchData(0, direction.name);
+    }
     super.onMove(speed, direction, angle);
+  }
+
+  @override
+  bool onCollision(GameComponent component, bool active) {
+    if (component is RemoteBreaker) {
+      return false;
+    }
+    return super.onCollision(component, active);
   }
 }

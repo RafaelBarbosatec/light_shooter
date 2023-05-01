@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:nakama/api.dart' as api;
+// ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
 class ServerClient {
@@ -16,11 +16,15 @@ class ServerClient {
     );
   }
 
-  Future<Session> signIn() {
+  Future<Session> signInDevice({String? nickName}) {
     if (_session == null) {
       String deviceId = Random().nextInt(1000000).toString();
       return _nakamaClient
-          .authenticateEmail(email: '$deviceId@email.com', password: 'password')
+          .authenticateDevice(
+        deviceId: 'fd6e533e-0cdd-408a-a8dc-4eeac1034300',
+        create: true,
+        username: nickName,
+      )
           .then((value) {
         return _session = value;
       });
@@ -29,7 +33,7 @@ class ServerClient {
     }
   }
 
-  Future<api.Account?> getAccount() {
+  Future<Account?> getAccount() {
     if (_session != null) {
       return _nakamaClient.getAccount(_session!);
     } else {
@@ -37,12 +41,19 @@ class ServerClient {
     }
   }
 
-  // Future loggot() async {
-  //   if (_session != null) {
-  //     await _nakamaClient.a(session: _session!);
-  //     _session = null;
-  //   } else {
-  //     return Future.value();
-  //   }
-  // }
+  Future loggot() async {
+    if (_session != null) {
+      await _nakamaClient.sessionLogout(session: _session!);
+      _session = null;
+    } else {
+      return Future.value();
+    }
+  }
+
+  Session getSession() {
+    if (_session == null) {
+      throw Exception('You are not signed');
+    }
+    return _session!;
+  }
 }

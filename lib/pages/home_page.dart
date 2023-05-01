@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _signIn() {
-    _client.signIn().then((value) async {
+    _client.signInDevice().then((value) async {
        inject<WebsocketClient>().init(value);
       if (mounted) {
         Navigator.pushNamed(context, '/roomMatch');
