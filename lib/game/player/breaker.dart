@@ -90,12 +90,20 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
     super.onMouseHoverScreen(pointer, position);
   }
 
+  Direction? lastSOcketDirection;
   @override
   void onMove(double speed, Direction direction, double angle) {
-    if (direction != lastDirection) {
+    if (direction != lastSOcketDirection) {
+      lastSOcketDirection = direction;
       websocketClient.sendMatchData(0, direction.name);
     }
     super.onMove(speed, direction, angle);
+  }
+
+  @override
+  void idle() {
+    websocketClient.sendMatchData(0, 'idle');
+    super.idle();
   }
 
   @override
