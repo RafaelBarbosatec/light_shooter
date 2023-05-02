@@ -28,14 +28,16 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
     return super.onLoad();
   }
 
-  void execShootAndChangeAngle(double radAngle) {
+  bool execShootAndChangeAngle(double radAngle, double damage) {
     changeAngle(radAngle);
     if (checkInterval('SHOOT_INTERVAL', 500, dt)) {
-      execShoot(radAngle);
+      execShoot(radAngle, damage);
+      return true;
     }
+    return false;
   }
 
-  void execShoot(double radAngle) {
+  void execShoot(double radAngle, double damage) {
     playSpriteAnimationOnce(
       PlayerSpriteSheet.gunShot,
     );
@@ -43,7 +45,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
       animation: PlayerSpriteSheet.bullet,
       size: Vector2.all(32),
       angle: radAngle,
-      damage: 100,
+      damage: damage,
       speed: 250,
       collision: CollisionConfig(
         collisions: [

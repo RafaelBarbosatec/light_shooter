@@ -18,6 +18,7 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   late WebsocketClient _websocketClient;
   late ServerClient _serverClient;
+  BonfireGame? game;
   @override
   void initState() {
     _serverClient = inject();
@@ -64,19 +65,20 @@ class _GameState extends State<Game> {
   }
 
   _onMatchPresence(MatchPresenceEvent data) {
-    print(data.toString());
+    Future.delayed(const Duration(seconds: 2), () {
+      for (var element in data.joins) {
+        game?.add(
+          RemoteBreaker(
+            id: element.userId,
+            websocketClient: _websocketClient,
+            position: Vector2.all(96),
+          ),
+        );
+      }
+    });
   }
 
   void _onReady(BonfireGame game) {
-    for (var element
-        in (_websocketClient.getMatch() as RealtimeMatch).presences) {
-      game.add(
-        RemoteBreaker(
-          id: element.userId,
-          websocketClient: _websocketClient,
-          position: Vector2.all(96),
-        ),
-      );
-    }
+    this.game = game;
   }
 }

@@ -22,6 +22,7 @@ class RemoteBreaker extends SimpleEnemy
           animation: PlayerSpriteSheet.animation,
           speed: 60,
         ) {
+          
     setupCollision(
       CollisionConfig(
         collisions: [
