@@ -36,6 +36,7 @@ class RemoteBreaker extends SimpleEnemy
     setupBarLife(
       size: Vector2(width / 2, 6),
       borderRadius: BorderRadius.circular(10),
+      barLifePosition: BarLifePorition.bottom,
     );
   }
 

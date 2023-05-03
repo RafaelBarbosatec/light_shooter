@@ -30,7 +30,7 @@ class Breaker extends SimplePlayer
           speed: 60,
         ) {
     enabledDiagonalMovements = false;
-    enableMouseGesture = enabledMouse;
+    // enableMouseGesture = enabledMouse;
     setupCollision(
       CollisionConfig(
         collisions: [
