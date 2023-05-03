@@ -1,5 +1,6 @@
 // ignore: depend_on_referenced_packages
 import 'dart:async';
+import 'dart:math';
 
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
@@ -8,7 +9,8 @@ class WebsocketClient {
   final String host;
   NakamaWebsocketClient? _websocketClient;
   MatchmakerTicket? matchmakerTicket;
-  Match? matched;
+  Match? match;
+  MatchmakerMatched? matched;
   final List<Function(MatchData data)> _onMatchDataObservers = [];
   final List<Function(MatchPresenceEvent data)> _onMatchPresenceObservers = [];
 
@@ -27,7 +29,8 @@ class WebsocketClient {
 
   Future<MatchmakerTicket> createMatchMaker({
     int minCount = 2,
-    int maxCount = 4,
+    int maxCount = 2,
+    Map<String, String>? propertiers,
   }) {
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
@@ -38,9 +41,13 @@ class WebsocketClient {
     }
     return _websocketClient!
         .addMatchmaker(
-      minCount: 2,
-      maxCount: 4,
+      minCount: minCount,
+      maxCount: maxCount,
       query: '*',
+      numericProperties: {
+        'numberPosition': Random().nextInt(90000).toDouble(),
+      },
+      stringProperties: propertiers,
     )
         .then(
       (value) {
@@ -72,11 +79,13 @@ class WebsocketClient {
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
+    this.matched = matched;
     return _websocketClient!
         .joinMatch(matched.matchId ?? '', token: matched.token)
         .then((value) {
       _startListens();
-      return this.matched = value;
+
+      return match = value;
     });
   }
 
@@ -84,10 +93,10 @@ class WebsocketClient {
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
-    if (matched?.matchId == null) {
+    if (match?.matchId == null) {
       throw Exception('There is not matched');
     }
-    await _websocketClient!.leaveMatch(matched?.matchId ?? '');
+    await _websocketClient!.leaveMatch(match?.matchId ?? '');
     _stopListens();
   }
 
@@ -95,12 +104,12 @@ class WebsocketClient {
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
-    if (matched?.matchId == null) {
+    if (match?.matchId == null) {
       throw Exception('There is not matched');
     }
 
     return _websocketClient!.sendMatchData(
-      matchId: matched!.matchId,
+      matchId: match!.matchId,
       opCode: Int64(code),
       data: data.codeUnits,
     );
@@ -150,6 +159,13 @@ class WebsocketClient {
   }
 
   Match getMatch() {
+    if (match?.matchId == null) {
+      throw Exception('There is not matched');
+    }
+    return match!;
+  }
+
+  MatchmakerMatched getMatched() {
     if (matched?.matchId == null) {
       throw Exception('There is not matched');
     }

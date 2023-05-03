@@ -18,7 +18,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
   }
 
   _onDataObserver(MatchData data) {
-    if (data.presence.sessionId == breaker.id) {
+    if (data.presence.userId == breaker.id) {
       switch (MessageCodeEnum.values[data.opCode]) {
         case MessageCodeEnum.leaderVode:
           break;

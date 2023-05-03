@@ -114,12 +114,6 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   }
 
   @override
-  void idle() {
-    sendMessage(MoveMessage('idle', position, speed));
-    super.idle();
-  }
-
-  @override
   bool onCollision(GameComponent component, bool active) {
     if (component is RemoteBreaker) {
       return false;
