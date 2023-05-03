@@ -12,12 +12,10 @@ import 'package:light_shooter/shared/util/buffer_delay.dart';
 import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControl on SimpleEnemy {
+  late BufferDelay<Message> buffer;
   JoystickMoveDirectional? _remoteDirection;
   RemoteBreaker get breaker => this as RemoteBreaker;
-
   double gunAngle = 0.0;
-
-  late BufferDelay<Message> buffer;
 
   @override
   void onMount() {
@@ -26,7 +24,13 @@ mixin RemoteBreakerControl on SimpleEnemy {
     super.onMount();
   }
 
-  _onDataObserver(MatchData data) {
+  @override
+  void die() {
+    breaker.websocketClient.removeOnMatchDataObserser(_onDataObserver);
+    super.die();
+  }
+
+  void _onDataObserver(MatchData data) {
     String dataString = String.fromCharCodes(data.data);
     final json = jsonDecode(dataString);
     Message m = Message.fromJson(json);
@@ -45,7 +49,6 @@ mixin RemoteBreakerControl on SimpleEnemy {
       case JoystickMoveDirectional.MOVE_DOWN:
         moveDown(speed);
         break;
-
       case JoystickMoveDirectional.MOVE_LEFT:
         moveLeft(speed);
         break;
@@ -67,12 +70,6 @@ mixin RemoteBreakerControl on SimpleEnemy {
     super.update(dt);
   }
 
-  @override
-  void die() {
-    breaker.websocketClient.removeOnMatchDataObserser(_onDataObserver);
-    super.die();
-  }
-
   void _listenEventBuffer(Message value) {
     switch (MessageCodeEnum.values[value.op]) {
       case MessageCodeEnum.movement:
@@ -82,7 +79,9 @@ mixin RemoteBreakerControl on SimpleEnemy {
         _doAttack(value);
         break;
       case MessageCodeEnum.die:
-        // die();
+        if (!isDead) {
+          die();
+        }
         break;
       case MessageCodeEnum.receiveDamage:
         _doReceiveDamage(value);
