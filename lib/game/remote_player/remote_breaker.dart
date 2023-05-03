@@ -6,7 +6,7 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
 class RemoteBreaker extends SimpleEnemy
-    with ObjectCollision, RemoteBreakerControl {
+    with ObjectCollision, RemoteBreakerControl, UseBarLife {
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
@@ -31,6 +31,11 @@ class RemoteBreaker extends SimpleEnemy
           ),
         ],
       ),
+    );
+
+    setupBarLife(
+      size: Vector2(width / 2, 6),
+      borderRadius: BorderRadius.circular(10),
     );
   }
 
