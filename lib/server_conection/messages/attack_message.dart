@@ -16,7 +16,10 @@ class AttackMessage extends Message {
         );
 
   factory AttackMessage.fromJson(Map<String, dynamic> json) {
-    final msg = Message.fromJson(json);
+    return AttackMessage.fromMessage(Message.fromJson(json));
+  }
+
+  factory AttackMessage.fromMessage(Message msg) {
     return AttackMessage(
       double.tryParse(msg.data['1'].toString()) ?? 0.0,
       msg.data['2'],

@@ -21,7 +21,10 @@ class MoveMessage extends Message {
         );
 
   factory MoveMessage.fromJson(Map<String, dynamic> json) {
-    final msg = Message.fromJson(json);
+    return MoveMessage.fromMessage(Message.fromJson(json));
+  }
+
+  factory MoveMessage.fromMessage(Message msg) {
     var pos = msg.data['2'] as Map;
     return MoveMessage(
       msg.data['1'],

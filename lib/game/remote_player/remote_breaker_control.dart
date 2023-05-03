@@ -3,33 +3,31 @@ import 'dart:convert';
 import 'package:bonfire/bonfire.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
+import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/base/message_code.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
+import 'package:light_shooter/shared/util/buffer_delay.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControl on SimpleEnemy {
   JoystickMoveDirectional? _remoteDirection;
   RemoteBreaker get breaker => this as RemoteBreaker;
+
+  late BufferDelay<Message> buffer;
+
   @override
   void onMount() {
+    buffer = BufferDelay(80, _listenEventBuffer);
     breaker.websocketClient.addOnMatchDataObserser(_onDataObserver);
     super.onMount();
   }
 
   _onDataObserver(MatchData data) {
-    if (data.presence.userId == breaker.id) {
-      switch (MessageCodeEnum.values[data.opCode]) {
-        case MessageCodeEnum.leaderVode:
-          break;
-        case MessageCodeEnum.movement:
-          _handleMoveOp(data.data);
-          break;
-        case MessageCodeEnum.attack:
-          _handleAttackOp(data.data);
-          break;
-      }
-    }
+    String dataString = String.fromCharCodes(data.data);
+    final json = jsonDecode(dataString);
+    Message m = Message.fromJson(json);
+    buffer.add(m, m.date);
   }
 
   @override
@@ -65,29 +63,44 @@ mixin RemoteBreakerControl on SimpleEnemy {
     super.update(dt);
   }
 
-  void _handleMoveOp(List<int> data) {
-    String dataString = String.fromCharCodes(data);
-    final json = jsonDecode(dataString);
-    final move = MoveMessage.fromJson(json);
-    _remoteDirection = JoystickMoveDirectional.values.firstWhere(
-      (element) => element.name == move.direction,
-    );
-    speed = move.speed;
-  }
-
-  void _handleAttackOp(List<int> data) {
-    String dataString = String.fromCharCodes(data);
-    final json = jsonDecode(dataString);
-    final attack = AttackMessage.fromJson(json);
-    breaker.gun?.changeAngle(attack.angle);
-    if (attack.damage > 0) {
-      breaker.gun?.execShoot(attack.angle, attack.damage);
-    }
-  }
-
   @override
   void die() {
     breaker.websocketClient.removeOnMatchDataObserser(_onDataObserver);
     super.die();
+  }
+
+  void _listenEventBuffer(Message value) {
+    switch (MessageCodeEnum.values[value.op]) {
+      case MessageCodeEnum.movement:
+        _doMove(value);
+        break;
+      case MessageCodeEnum.attack:
+        _doAttack(value);
+        break;
+      case MessageCodeEnum.die:
+        _handleDieOp();
+        break;
+    }
+  }
+
+  void _handleDieOp() {
+    die();
+  }
+
+  void _doMove(Message value) {
+    final move = MoveMessage.fromMessage(value);
+    _remoteDirection = JoystickMoveDirectional.values.firstWhere(
+      (element) => element.name == move.direction,
+    );
+    speed = move.speed;
+    position = move.position;
+  }
+
+  void _doAttack(Message value) {
+    final attack = AttackMessage.fromMessage(value);
+    breaker.gun?.changeAngle(attack.angle);
+    if (attack.damage > 0) {
+      breaker.gun?.execShoot(attack.angle, attack.damage);
+    }
   }
 }

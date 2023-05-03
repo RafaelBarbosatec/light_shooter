@@ -7,6 +7,7 @@ import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
+import 'package:light_shooter/server_conection/messages/die_message.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
@@ -134,6 +135,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
 
   @override
   void die() {
+    sendMessage(DieMessage());
     gun?.removeFromParent();
     animation?.playOnce(
       PlayerSpriteSheet.die,
