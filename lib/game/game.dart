@@ -88,8 +88,15 @@ class _GameState extends State<Game> {
     );
   }
 
-  _onMatchPresence(MatchPresenceEvent data) {
-    if (game != null) {}
+  void _onMatchPresence(MatchPresenceEvent data) {
+    if (game != null) {
+      for (var leave in data.leaves) {
+        game!
+            .componentsByType<RemoteBreaker>()
+            .where((element) => element.id == leave.userId)
+            .forEach((remote) => remote.removeFromParent());
+      }
+    }
   }
 
   void _onReady(BonfireGame game) {

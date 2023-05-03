@@ -41,6 +41,16 @@ class ServerClient {
     }
   }
 
+  Future addLeaderboardScore(int score) async {
+    if (_session != null) {
+      return _nakamaClient.writeLeaderboardRecord(
+        session: _session!,
+        leaderboardName: 'PlayerRank',
+        score: score,
+      );
+    }
+  }
+
   Future loggot() async {
     if (_session != null) {
       await _nakamaClient.sessionLogout(session: _session!);
