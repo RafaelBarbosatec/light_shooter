@@ -11,11 +11,13 @@ import 'package:nakama/nakama.dart';
 
 class PlayerPropertie {
   String userId;
+  String name;
   Vector2 position;
   String skin;
   PlayerPropertie({
     required this.userId,
     required this.position,
+    this.name = '',
     this.skin = '',
   });
 }

@@ -99,12 +99,14 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       if (u.presence.userId == userId) {
         myProperties = PlayerPropertie(
           userId: u.presence.userId,
+          name: u.presence.username,
           position: positionsToBorn[index],
         );
       } else {
         opponentPositions.add(
           PlayerPropertie(
             userId: u.presence.userId,
+            name: u.presence.username,
             position: positionsToBorn[index],
           ),
         );
