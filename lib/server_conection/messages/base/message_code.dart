@@ -1,1 +1,1 @@
-enum MessageCodeEnum { movement, attack,die }
+enum MessageCodeEnum { movement, attack, die, receiveDamage }

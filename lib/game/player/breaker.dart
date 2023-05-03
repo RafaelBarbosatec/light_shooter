@@ -9,6 +9,7 @@ import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/die_message.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
+import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
 class Breaker extends SimplePlayer
@@ -83,10 +84,11 @@ class Breaker extends SimplePlayer
   }
 
   @override
-  void receiveDamage(AttackFromEnum attacker, double damage, identify) {
+  void removeLife(double life) {
     gameRef.colorFilter?.config.color = flashDamage;
     gameRef.colorFilter?.animateTo(Colors.transparent);
-    super.receiveDamage(attacker, damage, identify);
+    sendMessage(ReceiveDamageMessage(life));
+    super.removeLife(life);
   }
 
   @override

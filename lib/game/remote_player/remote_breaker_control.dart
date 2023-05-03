@@ -6,6 +6,7 @@ import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/base/message_code.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
+import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
 import 'package:light_shooter/shared/util/buffer_delay.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
@@ -81,7 +82,10 @@ mixin RemoteBreakerControl on SimpleEnemy {
         _doAttack(value);
         break;
       case MessageCodeEnum.die:
-        die();
+        // die();
+        break;
+      case MessageCodeEnum.receiveDamage:
+        _doReceiveDamage(value);
         break;
     }
   }
@@ -101,5 +105,10 @@ mixin RemoteBreakerControl on SimpleEnemy {
     if (attack.damage > 0) {
       breaker.gun?.execShoot(attack.angle, attack.damage);
     }
+  }
+
+  void _doReceiveDamage(Message value) {
+    final msg = ReceiveDamageMessage.fromMessage(value);
+    removeLife(msg.damage);
   }
 }
