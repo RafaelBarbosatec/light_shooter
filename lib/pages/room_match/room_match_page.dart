@@ -23,6 +23,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
   StreamSubscription? onMatchmakerMatchedSubscription;
   MatchmakerTicket? matchmakerTicket;
   String userId = '';
+  String userName = '';
 
   List<Vector2> positionsToBorn = [
     Vector2(3, 3),
@@ -53,10 +54,22 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            FutureBuilder<Account?>(
+              future: _serverClient.getAccount(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(54.0),
+                    child: Text('Hello ${snapshot.data?.user.username}!'),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
             if (matchmakerTicket == null)
               ElevatedButton(
                 onPressed: _createMatchMaker,
-                child: const Text('Procurara partida'),
+                child: const Text('Find game'),
               )
             else ...[
               const CircularProgressIndicator(),
@@ -68,12 +81,24 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Procurando players'),
+              const Text('Looking for players'),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: _cancelMatchMaker,
+                child: const Text('Cancel'),
+              )
             ]
           ],
         ),
       ),
     );
+  }
+
+  void _cancelMatchMaker() async {
+    await _websocketClient.exitMatchmaker();
+    setState(() {
+      matchmakerTicket = null;
+    });
   }
 
   void _createMatchMaker() {

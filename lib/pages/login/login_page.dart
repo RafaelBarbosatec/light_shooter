@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: ElevatedButton(
           onPressed: _signIn,
-          child: const Text('Entrar'),
+          child: const Text('Enter'),
         ),
       ),
     );
