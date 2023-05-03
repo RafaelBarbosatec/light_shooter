@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:light_shooter/pages/room_match/room_match_route.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _LoginPageState extends State<LoginPage> {
   late ServerClient _client;
   @override
   void initState() {
@@ -32,9 +33,9 @@ class _HomePageState extends State<HomePage> {
 
   void _signIn() {
     _client.signInDevice().then((value) async {
-       inject<WebsocketClient>().init(value);
+      inject<WebsocketClient>().init(value);
       if (mounted) {
-        Navigator.pushNamed(context, '/roomMatch');
+        RoomMatchRoute.open(context);
       }
     });
   }

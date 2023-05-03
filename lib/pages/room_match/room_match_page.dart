@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'package:light_shooter/game/game.dart';
+import 'package:light_shooter/game/game_route.dart';
+import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 // ignore: depend_on_referenced_packages
@@ -15,13 +19,23 @@ class RoomMatchPage extends StatefulWidget {
 
 class _RoomMatchPageState extends State<RoomMatchPage> {
   late WebsocketClient _websocketClient;
+  late ServerClient _serverClient;
   StreamSubscription? onMatchmakerMatchedSubscription;
   MatchmakerTicket? matchmakerTicket;
+  String userId = '';
+
+  List<Vector2> positionsToBorn = [
+    Vector2(3, 3),
+    Vector2(8, 15),
+    Vector2(15, 3),
+  ];
   @override
   void initState() {
     _websocketClient = inject();
+    _serverClient = inject();
     onMatchmakerMatchedSubscription =
         _websocketClient.listenMatchmaker().listen(_onMatchmaker);
+    userId = _serverClient.getSession().userId;
     super.initState();
   }
 
@@ -64,9 +78,42 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
   }
 
   void _onMatchmaker(MatchmakerMatched event) {
+    List<MatchmakerUser> users = event.users.toList();
+    users.sort(
+      (a, b) {
+        double firstNumber =
+            a.numericProperties[WebsocketClient.PARAM_NUMBER_POSITION] ?? 0.0;
+        double secondNumber =
+            b.numericProperties[WebsocketClient.PARAM_NUMBER_POSITION] ?? 0.0;
+        return firstNumber.compareTo(secondNumber);
+      },
+    );
+
+    Vector2 myPosition = Vector2.zero();
+    List<OpponentPosition> opponentPositions = [];
+    int index = 0;
+    for (var u in users) {
+      if (u.presence.userId == userId) {
+        myPosition = positionsToBorn[index];
+      } else {
+        opponentPositions.add(
+          OpponentPosition(
+            userId: u.presence.userId,
+            position: positionsToBorn[index],
+          ),
+        );
+      }
+      index++;
+    }
+
+    GameProperties properties = GameProperties(
+      myPosition: myPosition,
+      opponentPositions: opponentPositions,
+    );
+
     _websocketClient.joinMatch(event).then((value) {
       if (mounted) {
-        Navigator.pushNamed(context, '/game');
+        GameRoute.open(context, properties);
       }
     });
   }

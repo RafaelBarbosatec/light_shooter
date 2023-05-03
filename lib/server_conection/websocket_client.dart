@@ -1,4 +1,6 @@
 // ignore: depend_on_referenced_packages
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'dart:math';
 
@@ -6,6 +8,7 @@ import 'dart:math';
 import 'package:nakama/nakama.dart';
 
 class WebsocketClient {
+  static const PARAM_NUMBER_POSITION = 'numberPosition';
   final String host;
   NakamaWebsocketClient? _websocketClient;
   MatchmakerTicket? matchmakerTicket;
@@ -45,7 +48,7 @@ class WebsocketClient {
       maxCount: maxCount,
       query: '*',
       numericProperties: {
-        'numberPosition': Random().nextInt(90000).toDouble(),
+        PARAM_NUMBER_POSITION: Random().nextInt(90000).toDouble(),
       },
       stringProperties: propertiers,
     )

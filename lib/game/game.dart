@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/breaker.dart';
@@ -8,8 +9,27 @@ import 'package:light_shooter/shared/bootstrap.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
+class OpponentPosition {
+  String userId;
+  Vector2 position;
+  OpponentPosition({
+    required this.userId,
+    required this.position,
+  });
+}
+
+class GameProperties {
+  final Vector2 myPosition;
+  final List<OpponentPosition> opponentPositions;
+  GameProperties({
+    required this.myPosition,
+    required this.opponentPositions,
+  });
+}
+
 class Game extends StatefulWidget {
-  const Game({Key? key}) : super(key: key);
+  final GameProperties properties;
+  const Game({Key? key, required this.properties}) : super(key: key);
 
   @override
   State<Game> createState() => _GameState();
@@ -26,7 +46,6 @@ class _GameState extends State<Game> {
     _websocketClient = inject();
     userId = _serverClient.getSession().userId;
     _websocketClient.addOnMatchPresenceObserser(_onMatchPresence);
-    _websocketClient.addOnMatchDataObserser((data) => print(data));
     super.initState();
   }
 
@@ -52,7 +71,7 @@ class _GameState extends State<Game> {
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
       player: Breaker(
-        position: Vector2.all(96),
+        position: widget.properties.myPosition * 32,
         websocketClient: _websocketClient,
       ),
       cameraConfig: CameraConfig(
@@ -71,17 +90,14 @@ class _GameState extends State<Game> {
 
   void _onReady(BonfireGame game) {
     this.game = game;
-    for (var element in _websocketClient.getMatched().users) {
-      print(element.numericProperties);
-      if (element.presence.userId != userId) {
-        game.add(
-          RemoteBreaker(
-            id: element.presence.userId,
-            websocketClient: _websocketClient,
-            position: Vector2.all(96),
-          ),
-        );
-      }
+    for (var element in widget.properties.opponentPositions) {
+      game.add(
+        RemoteBreaker(
+          id: element.userId,
+          websocketClient: _websocketClient,
+          position: element.position * 32,
+        ),
+      );
     }
   }
 }
