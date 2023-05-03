@@ -47,13 +47,15 @@ class RemoteBreaker extends SimpleEnemy
   }
 
   @override
+  void receiveDamage(AttackFromEnum attacker, double damage, identify) {}
+
+  @override
   void die() {
     gun?.removeFromParent();
     animation?.playOnce(
       PlayerSpriteSheet.die,
       onFinish: removeFromParent,
     );
-
     super.die();
   }
 }

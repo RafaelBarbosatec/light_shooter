@@ -14,6 +14,8 @@ mixin RemoteBreakerControl on SimpleEnemy {
   JoystickMoveDirectional? _remoteDirection;
   RemoteBreaker get breaker => this as RemoteBreaker;
 
+  double gunAngle = 0.0;
+
   late BufferDelay<Message> buffer;
 
   @override
@@ -60,6 +62,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
         break;
       default:
     }
+    breaker.gun?.changeLerpAngle(gunAngle, dt);
     super.update(dt);
   }
 
@@ -78,13 +81,9 @@ mixin RemoteBreakerControl on SimpleEnemy {
         _doAttack(value);
         break;
       case MessageCodeEnum.die:
-        _handleDieOp();
+        die();
         break;
     }
-  }
-
-  void _handleDieOp() {
-    die();
   }
 
   void _doMove(Message value) {
@@ -98,7 +97,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
 
   void _doAttack(Message value) {
     final attack = AttackMessage.fromMessage(value);
-    breaker.gun?.changeAngle(attack.angle);
+    gunAngle = breaker.gun?.calculeNewAngle(attack.angle) ?? 0.0;
     if (attack.damage > 0) {
       breaker.gun?.execShoot(attack.angle, attack.damage);
     }

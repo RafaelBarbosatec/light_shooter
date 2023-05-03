@@ -60,7 +60,14 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
               )
             else ...[
               const CircularProgressIndicator(),
-              Text('Ticket: ${matchmakerTicket!.ticket}'),
+              const SizedBox(height: 10),
+              Text(
+                'Ticket: ${matchmakerTicket!.ticket}',
+                style: const TextStyle(
+                  fontSize: 10,
+                ),
+              ),
+              const SizedBox(height: 16),
               const Text('Procurando players'),
             ]
           ],

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,9 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
   final bool withScreenEffect;
   final AttackFromEnum attackFrom;
-  BreakerCannon(GameComponent target, {this.withScreenEffect = true,this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY}) {
+  BreakerCannon(GameComponent target,
+      {this.withScreenEffect = true,
+      this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY}) {
     size = Vector2.all(64);
     setupFollower(offset: Vector2(0, 16), target: target);
   }
@@ -70,7 +73,15 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   }
 
   void changeAngle(double radAngle) {
-    angle = radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
+    angle = calculeNewAngle(radAngle);
+  }
+
+  double calculeNewAngle(double radAngle) {
+    return radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
+  }
+
+  void changeLerpAngle(double newAngle, double dt) {
+    angle = lerpDouble(angle, newAngle, dt * 4) ?? 0.0;
   }
 
   double _getAnglecapsule(double radAngle) {

@@ -11,7 +11,8 @@ import 'package:light_shooter/server_conection/messages/die_message.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
-class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
+class Breaker extends SimplePlayer
+    with ObjectCollision, MouseGesture, Lighting {
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
