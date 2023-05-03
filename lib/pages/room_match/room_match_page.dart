@@ -78,7 +78,26 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
   }
 
   void _onMatchmaker(MatchmakerMatched event) {
+    GameProperties properties = _getGameProperties(event);
+    _websocketClient.joinMatch(event).then((value) {
+      if (mounted) {
+        GameRoute.open(context, properties);
+      }
+    });
+  }
+
+  void _disposeStream() async {
+    await onMatchmakerMatchedSubscription?.cancel();
+  }
+
+  GameProperties _getGameProperties(MatchmakerMatched event) {
     List<MatchmakerUser> users = event.users.toList();
+    PlayerPropertie myProperties = PlayerPropertie(
+      position: Vector2.zero(),
+      userId: '',
+    );
+    List<PlayerPropertie> opponentPositions = [];
+
     users.sort(
       (a, b) {
         double firstNumber =
@@ -89,11 +108,6 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       },
     );
 
-    PlayerPropertie myProperties = PlayerPropertie(
-      position: Vector2.zero(),
-      userId: '',
-    );
-    List<PlayerPropertie> opponentPositions = [];
     int index = 0;
     for (var u in users) {
       if (u.presence.userId == userId) {
@@ -114,19 +128,9 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       index++;
     }
 
-    GameProperties properties = GameProperties(
+    return GameProperties(
       myProperties: myProperties,
       opponentPositions: opponentPositions,
     );
-
-    _websocketClient.joinMatch(event).then((value) {
-      if (mounted) {
-        GameRoute.open(context, properties);
-      }
-    });
-  }
-
-  void _disposeStream() async {
-    await onMatchmakerMatchedSubscription?.cancel();
   }
 }
