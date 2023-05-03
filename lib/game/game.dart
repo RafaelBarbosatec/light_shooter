@@ -32,6 +32,7 @@ class GameProperties {
 }
 
 class Game extends StatefulWidget {
+  static const tileSize = 32.0;
   final GameProperties properties;
   const Game({Key? key, required this.properties}) : super(key: key);
 
@@ -67,15 +68,14 @@ class _GameState extends State<Game> {
           ),
           JoystickAction(
             actionId: 2,
-            margin:
-                const EdgeInsets.all(50) + const EdgeInsets.only(right: 100),
+            margin: const EdgeInsets.only(right: 150, bottom: 50),
             color: Colors.yellow,
           ),
         ],
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
       player: Breaker(
-        position: widget.properties.myProperties.position * 32,
+        position: widget.properties.myProperties.position * Game.tileSize,
         websocketClient: _websocketClient,
       ),
       cameraConfig: CameraConfig(
@@ -106,7 +106,7 @@ class _GameState extends State<Game> {
         RemoteBreaker(
           id: element.userId,
           websocketClient: _websocketClient,
-          position: element.position * 32,
+          position: element.position * Game.tileSize,
         ),
       );
     }
