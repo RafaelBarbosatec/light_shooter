@@ -9,20 +9,22 @@ import 'package:light_shooter/shared/bootstrap.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
-class OpponentPosition {
+class PlayerPropertie {
   String userId;
   Vector2 position;
-  OpponentPosition({
+  String skin;
+  PlayerPropertie({
     required this.userId,
     required this.position,
+    this.skin = '',
   });
 }
 
 class GameProperties {
-  final Vector2 myPosition;
-  final List<OpponentPosition> opponentPositions;
+  final PlayerPropertie myProperties;
+  final List<PlayerPropertie> opponentPositions;
   GameProperties({
-    required this.myPosition,
+    required this.myProperties,
     required this.opponentPositions,
   });
 }
@@ -71,7 +73,7 @@ class _GameState extends State<Game> {
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
       player: Breaker(
-        position: widget.properties.myPosition * 32,
+        position: widget.properties.myProperties.position * 32,
         websocketClient: _websocketClient,
       ),
       cameraConfig: CameraConfig(

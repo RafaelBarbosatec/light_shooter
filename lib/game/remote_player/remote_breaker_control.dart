@@ -69,7 +69,6 @@ mixin RemoteBreakerControl on SimpleEnemy {
     String dataString = String.fromCharCodes(data);
     final json = jsonDecode(dataString);
     final move = MoveMessage.fromJson(json);
-    print(move.toJson());
     _remoteDirection = JoystickMoveDirectional.values.firstWhere(
       (element) => element.name == move.direction,
     );

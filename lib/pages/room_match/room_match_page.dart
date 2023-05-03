@@ -89,15 +89,21 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       },
     );
 
-    Vector2 myPosition = Vector2.zero();
-    List<OpponentPosition> opponentPositions = [];
+    PlayerPropertie myProperties = PlayerPropertie(
+      position: Vector2.zero(),
+      userId: '',
+    );
+    List<PlayerPropertie> opponentPositions = [];
     int index = 0;
     for (var u in users) {
       if (u.presence.userId == userId) {
-        myPosition = positionsToBorn[index];
+        myProperties = PlayerPropertie(
+          userId: u.presence.userId,
+          position: positionsToBorn[index],
+        );
       } else {
         opponentPositions.add(
-          OpponentPosition(
+          PlayerPropertie(
             userId: u.presence.userId,
             position: positionsToBorn[index],
           ),
@@ -107,7 +113,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     }
 
     GameProperties properties = GameProperties(
-      myPosition: myPosition,
+      myProperties: myProperties,
       opponentPositions: opponentPositions,
     );
 
