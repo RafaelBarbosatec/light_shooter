@@ -15,6 +15,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
+  double gunDamage = 25;
   WebsocketClient websocketClient;
   JoystickMoveDirectional? lastSocketDirection;
   Breaker({
@@ -46,7 +47,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
       if (event.event == ActionEvent.MOVE) {
         bool shoot = gun?.execShootAndChangeAngle(event.radAngle, 100) ?? false;
         if (shoot) {
-          _sendShoot(event.radAngle, 100);
+          _sendShoot(event.radAngle, gunDamage);
         }
       }
       if (event.event == ActionEvent.UP) {
@@ -100,7 +101,7 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
       gameRef.screenToWorld(position),
     );
     gun?.execShoot(angle, 100);
-    _sendShoot(angle, 100);
+    _sendShoot(angle, gunDamage);
     super.onMouseScreenTapDown(pointer, position, button);
   }
 
