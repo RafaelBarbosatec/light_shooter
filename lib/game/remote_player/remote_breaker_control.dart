@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:bonfire/bonfire.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
-import 'package:light_shooter/shared/enum/operation_code.dart';
+import 'package:light_shooter/server_conection/messages/base/message_code.dart';
+import 'package:light_shooter/server_conection/messages/move_message.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControl on SimpleEnemy {
-  Direction? _remoteDirection;
+  JoystickMoveDirectional? _remoteDirection;
   RemoteBreaker get breaker => this as RemoteBreaker;
   @override
   void onMount() {
@@ -17,14 +18,14 @@ mixin RemoteBreakerControl on SimpleEnemy {
   }
 
   _onDataObserver(MatchData data) {
-    if (data.presence.userId == breaker.id) {
-      switch (OperationCodeEnum.values[data.opCode]) {
-        case OperationCodeEnum.leaderVode:
+    if (data.presence.sessionId == breaker.id) {
+      switch (MessageCodeEnum.values[data.opCode]) {
+        case MessageCodeEnum.leaderVode:
           break;
-        case OperationCodeEnum.movement:
+        case MessageCodeEnum.movement:
           _handleMoveOp(data.data);
           break;
-        case OperationCodeEnum.attack:
+        case MessageCodeEnum.attack:
           _handleAttackOp(data.data);
           break;
       }
@@ -34,25 +35,30 @@ mixin RemoteBreakerControl on SimpleEnemy {
   @override
   void update(double dt) {
     switch (_remoteDirection) {
-      case Direction.left:
-        moveLeft(speed);
-        break;
-      case Direction.right:
-        moveRight(speed);
-        break;
-      case Direction.up:
+      case JoystickMoveDirectional.MOVE_UP:
         moveUp(speed);
         break;
-      case Direction.down:
+      case JoystickMoveDirectional.MOVE_RIGHT:
+        moveRight(speed);
+        break;
+      case JoystickMoveDirectional.MOVE_DOWN:
         moveDown(speed);
         break;
-      case Direction.upLeft:
+
+      case JoystickMoveDirectional.MOVE_LEFT:
+        moveLeft(speed);
         break;
-      case Direction.upRight:
+      case JoystickMoveDirectional.IDLE:
+        _remoteDirection = null;
+        idle();
         break;
-      case Direction.downLeft:
+      case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
         break;
-      case Direction.downRight:
+      case JoystickMoveDirectional.MOVE_DOWN_LEFT:
+        break;
+      case JoystickMoveDirectional.MOVE_UP_LEFT:
+        break;
+      case JoystickMoveDirectional.MOVE_UP_RIGHT:
         break;
       default:
     }
@@ -61,20 +67,28 @@ mixin RemoteBreakerControl on SimpleEnemy {
 
   void _handleMoveOp(List<int> data) {
     String dataString = String.fromCharCodes(data);
-    if (dataString == 'idle') {
-      _remoteDirection = null;
-      idle();
-    } else {
-      _remoteDirection = Direction.values.firstWhere(
-        (element) => element.name == dataString,
-      );
-    }
+    final json = jsonDecode(dataString);
+    final move = MoveMessage.fromJson(json);
+    print(move.toJson());
+    _remoteDirection = JoystickMoveDirectional.values.firstWhere(
+      (element) => element.name == move.direction,
+    );
+    speed = move.speed;
   }
 
   void _handleAttackOp(List<int> data) {
     String dataString = String.fromCharCodes(data);
     final json = jsonDecode(dataString);
     final attack = AttackMessage.fromJson(json);
-    breaker.gun?.execShootAndChangeAngle(attack.angle, attack.damage);
+    breaker.gun?.changeAngle(attack.angle);
+    if (attack.damage > 0) {
+      breaker.gun?.execShoot(attack.angle, attack.damage);
+    }
+  }
+
+  @override
+  void die() {
+    breaker.websocketClient.removeOnMatchDataObserser(_onDataObserver);
+    super.die();
   }
 }

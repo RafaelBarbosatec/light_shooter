@@ -6,17 +6,17 @@ import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
+import 'package:light_shooter/server_conection/messages/base/message.dart';
+import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
-import 'package:light_shooter/shared/enum/operation_code.dart';
 
 class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
-  final String id;
   WebsocketClient websocketClient;
+  JoystickMoveDirectional? lastSocketDirection;
   Breaker({
-    required this.id,
     required super.position,
     required this.websocketClient,
     this.enabledMouse = false,
@@ -50,12 +50,27 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
       }
       if (event.event == ActionEvent.UP) {
         gun?.changeAngle(0);
+        _sendShoot(0, 0);
       }
     }
     if (event.id == 2 && event.event == ActionEvent.DOWN) {
       gun?.reload();
     }
     super.joystickAction(event);
+  }
+
+  @override
+  void joystickChangeDirectional(JoystickDirectionalEvent event) {
+    bool canSend =
+        event.directional != JoystickMoveDirectional.MOVE_DOWN_RIGHT &&
+            event.directional != JoystickMoveDirectional.MOVE_DOWN_LEFT &&
+            event.directional != JoystickMoveDirectional.MOVE_UP_LEFT &&
+            event.directional != JoystickMoveDirectional.MOVE_UP_RIGHT;
+    if (event.directional != lastSocketDirection && canSend) {
+      lastSocketDirection = event.directional;
+      sendMessage(MoveMessage(event.directional.name, position, speed));
+    }
+    super.joystickChangeDirectional(event);
   }
 
   @override
@@ -98,25 +113,9 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
     super.onMouseHoverScreen(pointer, position);
   }
 
-  Direction? lastSOcketDirection;
-  @override
-  void onMove(double speed, Direction direction, double angle) {
-    if (direction != lastSOcketDirection) {
-      lastSOcketDirection = direction;
-      websocketClient.sendMatchData(
-        OperationCodeEnum.movement.index,
-        direction.name,
-      );
-    }
-    super.onMove(speed, direction, angle);
-  }
-
   @override
   void idle() {
-    websocketClient.sendMatchData(
-      OperationCodeEnum.movement.index,
-      'idle',
-    );
+    sendMessage(MoveMessage('idle', position, speed));
     super.idle();
   }
 
@@ -129,10 +128,23 @@ class Breaker extends SimplePlayer with ObjectCollision, MouseGesture {
   }
 
   void _sendShoot(double angle, damage) {
-    final attack = AttackMessage(damage, '', angle);
+    sendMessage(AttackMessage(damage, 'cannon', angle));
+  }
+
+  void sendMessage(Message m) {
     websocketClient.sendMatchData(
-      OperationCodeEnum.attack.index,
-      jsonEncode(attack.toJson()),
+      m.op,
+      jsonEncode(m.toJson()),
     );
+  }
+
+  @override
+  void die() {
+    gun?.removeFromParent();
+    animation?.playOnce(
+      PlayerSpriteSheet.die,
+      onFinish: removeFromParent,
+    );
+    super.die();
   }
 }

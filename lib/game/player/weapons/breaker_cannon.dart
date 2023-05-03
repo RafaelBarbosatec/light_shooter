@@ -8,7 +8,9 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   double dt = 0;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
-  BreakerCannon(GameComponent target) {
+  final bool withScreenEffect;
+  final AttackFromEnum attackFrom;
+  BreakerCannon(GameComponent target, {this.withScreenEffect = true,this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY}) {
     size = Vector2.all(64);
     setupFollower(offset: Vector2(0, 16), target: target);
   }
@@ -46,7 +48,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
       size: Vector2.all(32),
       angle: radAngle,
       damage: damage,
-      speed: 250,
+      speed: 300,
       collision: CollisionConfig(
         collisions: [
           CollisionArea.rectangle(
@@ -56,11 +58,14 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
         ],
       ),
       marginFromOrigin: -3,
-      attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
+      attackFrom: attackFrom,
     );
-    gameRef.camera.shake(intensity: 1);
-    gameRef.colorFilter?.config.color = flash;
-    gameRef.colorFilter?.animateTo(Colors.transparent);
+    if (withScreenEffect) {
+      gameRef.camera.shake(intensity: 1);
+      gameRef.colorFilter?.config.color = flash;
+      gameRef.colorFilter?.animateTo(Colors.transparent);
+    }
+
     gameRef.add(BulletCapsule(center, _getAnglecapsule(radAngle)));
   }
 

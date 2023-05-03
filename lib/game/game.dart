@@ -19,10 +19,12 @@ class _GameState extends State<Game> {
   late WebsocketClient _websocketClient;
   late ServerClient _serverClient;
   BonfireGame? game;
+  String sessionId = '';
   @override
   void initState() {
     _serverClient = inject();
     _websocketClient = inject();
+    sessionId = _serverClient.getSession().userId;
     _websocketClient.addOnMatchPresenceObserser(_onMatchPresence);
 
     super.initState();
@@ -50,7 +52,6 @@ class _GameState extends State<Game> {
       ),
       map: WorldMapByTiled('maps/map1.tmj'),
       player: Breaker(
-        id: _serverClient.getSession().userId,
         position: Vector2.all(96),
         websocketClient: _websocketClient,
       ),
@@ -65,20 +66,24 @@ class _GameState extends State<Game> {
   }
 
   _onMatchPresence(MatchPresenceEvent data) {
-    Future.delayed(const Duration(seconds: 2), () {
-      for (var element in data.joins) {
-        game?.add(
+    print(sessionId);
+    for (var element in data.joins) {
+      print('-> ${element.sessionId}');
+    }
+  }
+
+  void _onReady(BonfireGame game) {
+    this.game = game;
+    for (var element in (_websocketClient.matched as RealtimeMatch).presences) {
+      if (element.sessionId != sessionId) {
+        game.add(
           RemoteBreaker(
-            id: element.userId,
+            id: element.sessionId,
             websocketClient: _websocketClient,
             position: Vector2.all(96),
           ),
         );
       }
-    });
-  }
-
-  void _onReady(BonfireGame game) {
-    this.game = game;
+    }
   }
 }

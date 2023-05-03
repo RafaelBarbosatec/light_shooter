@@ -20,6 +20,16 @@ class PlayerSpriteSheet {
         ),
       );
 
+  static Future<SpriteAnimation> get die => SpriteAnimation.load(
+        'player_blue.png',
+        SpriteAnimationData.sequenced(
+          amount: 6,
+          stepTime: 0.1,
+          textureSize: Vector2.all(32),
+          texturePosition: Vector2(0, 96),
+        ),
+      );
+
   static Future<SpriteAnimation> get talk => SpriteAnimation.load(
         'player_blue.png',
         SpriteAnimationData.sequenced(

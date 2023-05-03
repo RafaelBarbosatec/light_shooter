@@ -47,7 +47,6 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
             else ...[
               const CircularProgressIndicator(),
               Text('Ticket: ${matchmakerTicket!.ticket}'),
-              Text(matchmakerTicket!.ticket),
               const Text('Procurando players'),
             ]
           ],

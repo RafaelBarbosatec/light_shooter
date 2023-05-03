@@ -18,10 +18,10 @@ class ServerClient {
 
   Future<Session> signInDevice({String? nickName}) {
     if (_session == null) {
-      String deviceId = Random().nextInt(1000000).toString();
+      String deviceId = Random().nextInt(9000).toString();
       return _nakamaClient
           .authenticateDevice(
-        deviceId: 'fd6e533e-0cdd-408a-a8dc-4eeac1034300',
+        deviceId: 'fd6e533e-0cdd-408a-a8dc-4eeac103$deviceId',
         create: true,
         username: nickName,
       )

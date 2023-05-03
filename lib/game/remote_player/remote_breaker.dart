@@ -22,7 +22,6 @@ class RemoteBreaker extends SimpleEnemy
           animation: PlayerSpriteSheet.animation,
           speed: 60,
         ) {
-          
     setupCollision(
       CollisionConfig(
         collisions: [
@@ -37,7 +36,24 @@ class RemoteBreaker extends SimpleEnemy
 
   @override
   void onMount() {
-    gameRef.add(gun = BreakerCannon(this));
+    gameRef.add(
+      gun = BreakerCannon(
+        this,
+        withScreenEffect: false,
+        attackFrom: AttackFromEnum.ENEMY,
+      ),
+    );
     super.onMount();
+  }
+
+  @override
+  void die() {
+    gun?.removeFromParent();
+    animation?.playOnce(
+      PlayerSpriteSheet.die,
+      onFinish: removeFromParent,
+    );
+
+    super.die();
   }
 }
