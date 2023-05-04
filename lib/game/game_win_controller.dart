@@ -29,6 +29,7 @@ class GameWinController extends GameComponent {
   void _showGameOver(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: const Text('Game Over'),
@@ -51,6 +52,7 @@ class GameWinController extends GameComponent {
     _serverClient.addLeaderboardScore(2);
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: const Text('Parabens!!!!'),
