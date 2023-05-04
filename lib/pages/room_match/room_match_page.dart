@@ -113,6 +113,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     GameProperties properties = _getGameProperties(event);
     _websocketClient.joinMatch(event).then((value) {
       if (mounted) {
+        _cancelMatchMaker();
         GameRoute.open(context, properties);
       }
     });
@@ -165,4 +166,6 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       opponentPositions: opponentPositions,
     );
   }
+
+  
 }

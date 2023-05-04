@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'package:light_shooter/game/game_win_controller.dart';
 import 'package:light_shooter/game/player/breaker.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
@@ -58,7 +59,9 @@ class _GameState extends State<Game> {
   Widget build(BuildContext context) {
     return BonfireWidget(
       joystick: Joystick(
-        keyboardConfig: KeyboardConfig(),
+        keyboardConfig: KeyboardConfig(
+          keyboardDirectionalType: KeyboardDirectionalType.wasd,
+        ),
         directional: JoystickDirectional(),
         actions: [
           JoystickAction(
@@ -85,6 +88,7 @@ class _GameState extends State<Game> {
       ),
       onReady: _onReady,
       onDispose: () => _websocketClient.leaveMatch(),
+      components: [GameWinController(_serverClient)],
     );
   }
 

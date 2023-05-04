@@ -100,7 +100,7 @@ class Breaker extends SimplePlayer
   @override
   void onMouseScreenTapDown(int pointer, Vector2 position, MouseButton button) {
     var angle = BonfireUtil.angleBetweenPoints(
-      center,
+      gun?.center ?? center,
       gameRef.screenToWorld(position),
     );
     gun?.execShoot(angle, 100);
@@ -111,7 +111,7 @@ class Breaker extends SimplePlayer
   @override
   void onMouseHoverScreen(int pointer, Vector2 position) {
     double angle = BonfireUtil.angleBetweenPoints(
-      center,
+      gun?.center ?? center,
       gameRef.screenToWorld(position),
     );
     gun?.changeAngle(angle);

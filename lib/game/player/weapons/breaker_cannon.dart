@@ -11,6 +11,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
   final bool withScreenEffect;
   final AttackFromEnum attackFrom;
+  int _countBullet = 10;
   BreakerCannon(GameComponent target,
       {this.withScreenEffect = true,
       this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY}) {
@@ -43,6 +44,9 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   }
 
   void execShoot(double radAngle, double damage) {
+    if (_countBullet <= 0) {
+      return;
+    }
     playSpriteAnimationOnce(
       PlayerSpriteSheet.gunShot,
     );
@@ -70,6 +74,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
     }
 
     gameRef.add(BulletCapsule(center, _getAnglecapsule(radAngle)));
+    _countBullet--;
   }
 
   void changeAngle(double radAngle) {
@@ -100,4 +105,10 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
       PlayerSpriteSheet.gunReload,
     );
   }
+
+  void addBullet(int count) {
+    _countBullet = count;
+  }
+
+  int get countBullet => _countBullet;
 }
