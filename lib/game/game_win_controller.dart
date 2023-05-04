@@ -9,7 +9,7 @@ class GameWinController extends GameComponent {
   GameWinController(this._serverClient);
   @override
   void update(double dt) {
-    if (checkInterval('CHECK_WIN', 200, dt) && !finishedGame) {
+    if (checkInterval('CHECK_WIN', 250, dt) && !finishedGame) {
       _verifyWinOrLose();
     }
     super.update(dt);
