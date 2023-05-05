@@ -14,6 +14,14 @@ class Frame<T> extends Timeline<T> {
   DateTime? timeRun;
 
   Frame(this.value, this.time);
+
+  int get differenceTimeRun {
+    if (timeRun != null) {
+      return DateTime.now().difference(timeRun!).inMilliseconds;
+    } else {
+      return 0;
+    }
+  }
 }
 
 class BufferDelay<T> {
@@ -42,8 +50,7 @@ class BufferDelay<T> {
           }
           addTimeLine(Frame(value, time));
         } else {
-          int delayDone =
-              DateTime.now().difference(lastFrame.timeRun!).inMilliseconds;
+          int delayDone = lastFrame.differenceTimeRun;
           int delay = delayLastFrame - (delayDone + this.delay);
           if (delay > 0) {
             addTimeLine(Delay(delay > this.delay ? this.delay : delay));
