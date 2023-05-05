@@ -4,6 +4,8 @@ import 'package:light_shooter/pages/login/login_route.dart';
 import 'package:light_shooter/pages/room_match/room_match_route.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 
+import 'pages/home/home_route.dart';
+
 void main() {
   Bootstrap.run();
   runApp(const MyApp());
@@ -21,8 +23,9 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         ...LoginRoute.builder,
-        ...GameRoute.builder,
+        ...HomeRoute.builder,
         ...RoomMatchRoute.builder,
+        ...GameRoute.builder,
       },
     );
   }

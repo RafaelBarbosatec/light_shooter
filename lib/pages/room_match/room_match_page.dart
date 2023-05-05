@@ -9,6 +9,9 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
+import 'package:light_shooter/shared/theme/game_colors.dart';
+import 'package:light_shooter/shared/widgets/game_button.dart';
+import 'package:light_shooter/shared/widgets/game_container.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
@@ -56,44 +59,62 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: GameColors.background,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
+          shrinkWrap: true,
           children: [
-            FutureBuilder<Account?>(
-              future: _serverClient.getAccount(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.all(54.0),
-                    child: Text('Hello ${snapshot.data?.user.username}!'),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+            Center(
+              child: FutureBuilder<Account?>(
+                future: _serverClient.getAccount(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Padding(
+                      padding: const EdgeInsets.all(54.0),
+                      child: Text(
+                        'Hello ${snapshot.data?.user.username}!',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
-            if (matchmakerTicket == null)
-              ElevatedButton(
-                onPressed: _createMatchMaker,
-                child: const Text('Find game'),
-              )
-            else ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 10),
-              Text(
-                'Ticket: ${matchmakerTicket!.ticket}',
-                style: const TextStyle(
-                  fontSize: 10,
+            Center(
+              child: GameContainer(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (matchmakerTicket == null)
+                      GameButton(
+                        onPressed: _createMatchMaker,
+                        text: 'Find game',
+                      )
+                    else ...[
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Ticket: ${matchmakerTicket!.ticket}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text('Looking for players'),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: _cancelMatchMaker,
+                        child: const Text('Cancel'),
+                      )
+                    ]
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text('Looking for players'),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _cancelMatchMaker,
-                child: const Text('Cancel'),
-              )
-            ]
+            ),
           ],
         ),
       ),
