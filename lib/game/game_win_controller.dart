@@ -1,6 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/pages/home/home_route.dart';
+import 'package:light_shooter/shared/widgets/game_dialog.dart';
 
 class GameWinController extends GameComponent {
   bool finishedGame = false;
@@ -24,57 +25,25 @@ class GameWinController extends GameComponent {
 
   void _verifyWinOrLose() {
     if (gameRef.player?.isDead == true) {
-      _showGameOver(gameRef.context);
+      _showDialog(gameRef.context, GameDialogTypeEnum.gameOver);
       finishedGame = true;
     }
     if (gameRef.livingEnemies().isEmpty) {
-      _showWin(gameRef.context);
+      _showDialog(gameRef.context, GameDialogTypeEnum.win);
       finishedGame = true;
     }
   }
 
-  void _showGameOver(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Game Over'),
-          content: const Text('Não desanime vamos ao treino!'),
-          actions: [
-            ElevatedButton(
-              onPressed: () => _goHome(context),
-              child: const Text('OK'),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void _showWin(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Parabens!!!!'),
-          content: const Text('Você venceu a batalha'),
-          actions: [
-            ElevatedButton(
-              onPressed: () => _goHome(context),
-              child: const Text('OK'),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void _goHome(BuildContext context) {
-    Navigator.popUntil(
+  void _showDialog(BuildContext context, GameDialogTypeEnum type) {
+    GameDialog.show(
       context,
-      (route) => route.settings.name == HomeRoute.name,
+      type,
+      onTapOk: () {
+        Navigator.popUntil(
+          context,
+          (route) => route.settings.name == HomeRoute.name,
+        );
+      },
     );
   }
 }

@@ -9,6 +9,6 @@ class LoginRoute {
       };
 
   static Future open(BuildContext context) {
-    return Navigator.of(context).pushNamed(name);
+    return Navigator.of(context).pushNamedAndRemoveUntil(name,(route) => false,);
   }
 }

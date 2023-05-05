@@ -33,6 +33,28 @@ class ServerClient {
     }
   }
 
+  Future<Session> signInEmail({
+    String? username,
+    required String email,
+    required String password,
+    bool create = false,
+  }) {
+    if (_session == null) {
+      return _nakamaClient
+          .authenticateEmail(
+        email: email,
+        password: password,
+        create: create,
+        username: username,
+      )
+          .then((value) {
+        return _session = value;
+      });
+    } else {
+      return Future.value(_session);
+    }
+  }
+
   Future<Account?> getAccount() {
     if (_session != null) {
       return _nakamaClient.getAccount(_session!);
@@ -51,7 +73,7 @@ class ServerClient {
     }
   }
 
-  Future loggot() async {
+  Future logout() async {
     if (_session != null) {
       await _nakamaClient.sessionLogout(session: _session!);
       _session = null;
