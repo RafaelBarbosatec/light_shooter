@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class PlayerCustomization {
@@ -17,5 +18,15 @@ class PlayerCustomization {
       'color': color.name,
       'skin': skin,
     };
+  }
+
+  PlayerCustomization copyWith({
+    PlayerColor? color,
+    String? skin,
+  }) {
+    return PlayerCustomization(
+      color: color ?? this.color,
+      skin: skin ?? this.skin,
+    );
   }
 }

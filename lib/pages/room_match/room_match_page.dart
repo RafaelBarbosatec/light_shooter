@@ -16,7 +16,8 @@ import 'package:light_shooter/shared/widgets/game_container.dart';
 import 'package:nakama/nakama.dart';
 
 class RoomMatchPage extends StatefulWidget {
-  const RoomMatchPage({super.key});
+  final PlayerCustomization custom;
+  const RoomMatchPage({super.key, required this.custom});
 
   @override
   State<RoomMatchPage> createState() => _RoomMatchPageState();

@@ -1,4 +1,5 @@
 import 'package:bonfire/bonfire.dart';
+import 'package:flutter/material.dart';
 
 enum PlayerColor {
   blue,
@@ -10,6 +11,17 @@ enum PlayerColor {
       return PlayerColor.blue;
     }
     return PlayerColor.values.firstWhere((element) => element.name == name);
+  }
+
+  Color getColor() {
+    switch (this) {
+      case PlayerColor.blue:
+        return const Color(0xFF3b5dc9);
+      case PlayerColor.green:
+        return const Color(0xFF257179);
+      case PlayerColor.red:
+        return const Color(0xFFb13e53);
+    }
   }
 }
 
