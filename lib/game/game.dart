@@ -58,39 +58,42 @@ class _GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
-    return BonfireWidget(
-      joystick: Joystick(
-        keyboardConfig: KeyboardConfig(
-          keyboardDirectionalType: KeyboardDirectionalType.wasd,
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: BonfireWidget(
+        joystick: Joystick(
+          keyboardConfig: KeyboardConfig(
+            keyboardDirectionalType: KeyboardDirectionalType.wasd,
+          ),
+          directional: JoystickDirectional(),
+          actions: [
+            JoystickAction(
+              actionId: 1,
+              margin: const EdgeInsets.all(50),
+              enableDirection: true,
+            ),
+            JoystickAction(
+              actionId: 2,
+              margin: const EdgeInsets.only(right: 150, bottom: 50),
+              color: Colors.yellow,
+            ),
+          ],
         ),
-        directional: JoystickDirectional(),
-        actions: [
-          JoystickAction(
-            actionId: 1,
-            margin: const EdgeInsets.all(50),
-            enableDirection: true,
-          ),
-          JoystickAction(
-            actionId: 2,
-            margin: const EdgeInsets.only(right: 150, bottom: 50),
-            color: Colors.yellow,
-          ),
-        ],
+        map: WorldMapByTiled('maps/map1.tmj'),
+        player: Breaker(
+          position: widget.properties.myProperties.position * Game.tileSize,
+          color: widget.properties.myProperties.customization.color,
+          websocketClient: _websocketClient,
+        ),
+        cameraConfig: CameraConfig(
+          zoom: 1.5,
+          smoothCameraEnabled: true,
+          smoothCameraSpeed: 3.0,
+        ),
+        onReady: _onReady,
+        onDispose: () => _websocketClient.leaveMatch(),
+        components: [GameWinController(_serverClient)],
       ),
-      map: WorldMapByTiled('maps/map1.tmj'),
-      player: Breaker(
-        position: widget.properties.myProperties.position * Game.tileSize,
-        color: widget.properties.myProperties.customization.color,
-        websocketClient: _websocketClient,
-      ),
-      cameraConfig: CameraConfig(
-        zoom: 1.5,
-        smoothCameraEnabled: true,
-        smoothCameraSpeed: 3.0,
-      ),
-      onReady: _onReady,
-      onDispose: () => _websocketClient.leaveMatch(),
-      components: [GameWinController(_serverClient)],
     );
   }
 

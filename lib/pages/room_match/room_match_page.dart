@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:light_shooter/game/game.dart';
 import 'package:light_shooter/game/game_route.dart';
 import 'package:light_shooter/game/util/player_customization.dart';
-import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
@@ -37,9 +36,6 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     Vector2(15, 3),
   ];
 
-  PlayerCustomization playerCustomization = const PlayerCustomization(
-    color: PlayerColor.green,
-  );
   @override
   void initState() {
     _websocketClient = inject();
@@ -47,6 +43,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     onMatchmakerMatchedSubscription =
         _websocketClient.listenMatchmaker().listen(_onMatchmaker);
     userId = _serverClient.getSession().userId;
+    Future.delayed(Duration.zero, _createMatchMaker);
     super.initState();
   }
 
@@ -65,51 +62,51 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Center(
-              child: FutureBuilder<Account?>(
-                future: _serverClient.getAccount(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Padding(
-                      padding: const EdgeInsets.all(54.0),
-                      child: Text(
-                        'Hello ${snapshot.data?.user.username}!',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
+            const Center(
+              child: Text(
+                'Looking for players',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
+            const SizedBox(height: 32),
             Center(
               child: GameContainer(
+                constraints: const BoxConstraints(maxWidth: 300),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (matchmakerTicket == null)
-                      GameButton(
-                        onPressed: _createMatchMaker,
-                        text: 'Find game',
-                      )
-                    else ...[
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Ticket: ${matchmakerTicket!.ticket}',
-                        style: const TextStyle(
-                          fontSize: 10,
+                    if (matchmakerTicket != null) ...[
+                      const SizedBox(height: 16),
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          GameColors.primary,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text('Looking for players'),
+                      const Text(
+                        'Ticket:',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        matchmakerTicket!.ticket,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                        ),
+                      ),
                       const SizedBox(height: 32),
-                      ElevatedButton(
+                      GameButton(
+                        expanded: true,
                         onPressed: _cancelMatchMaker,
-                        child: const Text('Cancel'),
+                        text: 'Cancel',
                       )
                     ]
                   ],
@@ -124,14 +121,14 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
 
   void _cancelMatchMaker() async {
     await _websocketClient.exitMatchmaker();
-    setState(() {
-      matchmakerTicket = null;
-    });
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void _createMatchMaker() {
     _websocketClient
-        .createMatchMaker(propertiers: playerCustomization.toMap())
+        .createMatchMaker(propertiers: widget.custom.toMap())
         .then((value) {
       setState(() {
         matchmakerTicket = value;

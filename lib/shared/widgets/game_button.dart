@@ -16,7 +16,7 @@ class GameButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(GameColors.primaty),
+          backgroundColor: MaterialStatePropertyAll(GameColors.primary),
           shape: MaterialStatePropertyAll(StadiumBorder()),
         ),
         child: Text(text),

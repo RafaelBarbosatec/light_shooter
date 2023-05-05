@@ -13,7 +13,7 @@ class GameContainer extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: GameColors.secondary,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: child,
     );

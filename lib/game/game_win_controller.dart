@@ -1,5 +1,6 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'package:light_shooter/pages/home/home_route.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 
 class GameWinController extends GameComponent {
@@ -36,10 +37,7 @@ class GameWinController extends GameComponent {
           content: const Text('Não desanime vamos ao treino!'),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context, false);
-              },
+              onPressed: () => _goHome(context),
               child: const Text('OK'),
             )
           ],
@@ -59,15 +57,19 @@ class GameWinController extends GameComponent {
           content: const Text('Você venceu a batalha'),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context, true);
-              },
+              onPressed: () => _goHome(context),
               child: const Text('OK'),
             )
           ],
         );
       },
+    );
+  }
+
+  void _goHome(BuildContext context) {
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name != HomeRoute.name,
     );
   }
 }

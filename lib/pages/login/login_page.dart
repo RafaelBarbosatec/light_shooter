@@ -6,6 +6,7 @@ import 'package:light_shooter/shared/bootstrap.dart';
 import 'package:light_shooter/shared/theme/game_colors.dart';
 import 'package:light_shooter/shared/widgets/game_button.dart';
 import 'package:light_shooter/shared/widgets/game_container.dart';
+import 'package:light_shooter/shared/widgets/game_textfield.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,19 +49,37 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
+                      const SizedBox(height: 16),
+                      const GameTextField(
+                        hint: 'E-mail',
                       ),
                       const SizedBox(height: 16),
+                      const GameTextField(
+                        hint: 'Senha',
+                      ),
+                      const SizedBox(height: 32),
                       GameButton(
                         expanded: true,
                         onPressed: _signIn,
                         text: 'Sign in',
                       ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 40,
+                        width: double.maxFinite,
+                        child: TextButton(
+                          onPressed: () {},
+                          style: const ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                              StadiumBorder(),
+                            ),
+                          ),
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

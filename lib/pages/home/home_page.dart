@@ -6,7 +6,7 @@ import 'package:light_shooter/pages/room_match/room_match_route.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 import 'package:light_shooter/shared/theme/game_colors.dart';
-import 'package:light_shooter/shared/widgets/gale_color_selector.dart';
+import 'package:light_shooter/shared/widgets/game_color_selector.dart';
 import 'package:light_shooter/shared/widgets/game_button.dart';
 import 'package:light_shooter/shared/widgets/game_container.dart';
 // ignore: depend_on_referenced_packages
