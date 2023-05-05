@@ -18,7 +18,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
 
   @override
   void onMount() {
-    buffer = BufferDelay(30, _listenEventBuffer);
+    buffer = BufferDelay(40, _listenEventBuffer);
     breaker.websocketClient.addOnMatchDataObserser(_onDataObserver);
     super.onMount();
   }

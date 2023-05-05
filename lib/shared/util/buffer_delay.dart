@@ -17,6 +17,7 @@ class Frame<T> extends Timeline<T> {
 }
 
 class BufferDelay<T> {
+  static const maxItemTimeLine = 10;
   final int delay;
   final List<Timeline<T>> _timeLine = [];
 
@@ -29,33 +30,27 @@ class BufferDelay<T> {
 
   void add(T value, DateTime time) {
     if (_timeLine.isEmpty) {
-      _timeLine.add(Delay(delay));
-      _timeLine.add(Frame<T>(value, time));
+      addTimeLine(Delay(delay));
+      addTimeLine(Frame<T>(value, time));
     } else {
       Frame<T> lastFrame = _timeLine.last as Frame<T>;
-      int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
-      if (lastFrame.timeRun == null) {
-        if (delayLastFrame > 0) {
-          _timeLine.add(Delay(delayLastFrame));
+      if (lastFrame.time.isBefore(time)) {
+        int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
+        if (lastFrame.timeRun == null) {
+          if (delayLastFrame > 0) {
+            addTimeLine(Delay(delayLastFrame));
+          }
+          addTimeLine(Frame(value, time));
+        } else {
+          int delayDone =
+              DateTime.now().difference(lastFrame.timeRun!).inMilliseconds;
+          int delay = delayLastFrame - (delayDone + this.delay);
+          if (delay > 0) {
+            addTimeLine(Delay(delay > this.delay ? this.delay : delay));
+          }
+          addTimeLine(Frame(value, time));
         }
-        _timeLine.add(Frame(value, time));
-      } else {
-        int delayDone =
-            DateTime.now().difference(lastFrame.timeRun!).inMilliseconds;
-        int delay = delayLastFrame - (delayDone + this.delay);
-        if (delay > 0) {
-          _timeLine.add(Delay(delay > this.delay ? this.delay : delay));
-        }
-        _timeLine.add(Frame(value, time));
       }
-    }
-  }
-
-  void reset() {
-    Frame f = _timeLine.whereType<Frame>().last;
-    if (f.timeRun != null) {
-      _timeLine.clear();
-      _currentIndex = -1;
     }
   }
 
@@ -71,18 +66,14 @@ class BufferDelay<T> {
         _listen(value.value);
       }
       running = false;
-    } else {
-      _removeUtilRestFive();
     }
   }
 
-  void _removeUtilRestFive() {
-    if (_timeLine.length > 10) {
-      var diff = _timeLine.length - 10;
-      List.generate(diff, (index) {
-        _timeLine.removeAt(0);
-        _currentIndex--;
-      });
+  void addTimeLine(Timeline<T> timeline) {
+    _timeLine.add(timeline);
+    if (_timeLine.length > maxItemTimeLine) {
+      _timeLine.removeAt(0);
+      _currentIndex--;
     }
   }
 }
