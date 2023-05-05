@@ -96,9 +96,6 @@ class Breaker extends SimplePlayer
   }
 
   @override
-  void onMouseCancel() {}
-
-  @override
   void onMouseTap(MouseButton button) {}
 
   @override
