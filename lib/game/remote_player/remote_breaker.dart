@@ -11,15 +11,17 @@ class RemoteBreaker extends SimpleEnemy
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
   final String id;
-  WebsocketClient websocketClient;
+  final WebsocketClient websocketClient;
+  final PlayerColor color;
   RemoteBreaker({
     required this.id,
     required super.position,
     required this.websocketClient,
+    required this.color,
     this.enabledMouse = false,
   }) : super(
           size: Vector2.all(64),
-          animation: PlayerSpriteSheet.animation,
+          animation: PlayerSpriteSheet.animation(color),
           speed: 60,
         ) {
     setupCollision(
@@ -44,7 +46,7 @@ class RemoteBreaker extends SimpleEnemy
   void onMount() {
     add(
       gun = BreakerCannon(
-        this,
+        color,
         withScreenEffect: false,
         attackFrom: AttackFromEnum.ENEMY,
       ),
@@ -58,7 +60,7 @@ class RemoteBreaker extends SimpleEnemy
   @override
   void die() {
     animation?.playOnce(
-      PlayerSpriteSheet.die,
+      PlayerSpriteSheet.die(color),
       onFinish: removeFromParent,
     );
     super.die();

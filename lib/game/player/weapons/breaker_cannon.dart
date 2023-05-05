@@ -11,12 +11,15 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
   final bool withScreenEffect;
   final AttackFromEnum attackFrom;
+  final PlayerColor color;
   int _countBullet = 10;
-  BreakerCannon(GameComponent target,
-      {this.withScreenEffect = true,
-      this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY}) {
+  BreakerCannon(
+    this.color, {
+    this.withScreenEffect = true,
+    this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY,
+  }) {
     size = Vector2.all(64);
-    setupFollower(offset: Vector2(0, 16), target: target);
+    setupFollower(offset: Vector2(0, 16));
   }
 
   @override
@@ -30,7 +33,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
 
   @override
   Future<void>? onLoad() async {
-    animation = await PlayerSpriteSheet.gun;
+    animation = await PlayerSpriteSheet.gun(color);
     return super.onLoad();
   }
 
@@ -48,7 +51,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
       return;
     }
     playSpriteAnimationOnce(
-      PlayerSpriteSheet.gunShot,
+      PlayerSpriteSheet.gunShot(color),
     );
     simpleAttackRangeByAngle(
       animation: PlayerSpriteSheet.bullet,
@@ -102,7 +105,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
 
   void reload() {
     playSpriteAnimationOnce(
-      PlayerSpriteSheet.gunReload,
+      PlayerSpriteSheet.gunReload(color),
     );
   }
 

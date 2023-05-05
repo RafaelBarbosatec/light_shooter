@@ -4,6 +4,8 @@ import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/game.dart';
 import 'package:light_shooter/game/game_route.dart';
+import 'package:light_shooter/game/util/player_customization.dart';
+import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
@@ -30,6 +32,10 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     Vector2(8, 15),
     Vector2(15, 3),
   ];
+
+  PlayerCustomization playerCustomization = const PlayerCustomization(
+    color: PlayerColor.green,
+  );
   @override
   void initState() {
     _websocketClient = inject();
@@ -102,7 +108,9 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
   }
 
   void _createMatchMaker() {
-    _websocketClient.createMatchMaker().then((value) {
+    _websocketClient
+        .createMatchMaker(propertiers: playerCustomization.toMap())
+        .then((value) {
       setState(() {
         matchmakerTicket = value;
       });
@@ -148,6 +156,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
           userId: u.presence.userId,
           name: u.presence.username,
           position: positionsToBorn[index],
+          customization: PlayerCustomization.fromMap(u.stringProperties),
         );
       } else {
         opponentPositions.add(
@@ -155,6 +164,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
             userId: u.presence.userId,
             name: u.presence.username,
             position: positionsToBorn[index],
+            customization: PlayerCustomization.fromMap(u.stringProperties),
           ),
         );
       }
@@ -166,6 +176,4 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
       opponentPositions: opponentPositions,
     );
   }
-
-  
 }

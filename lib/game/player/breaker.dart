@@ -20,13 +20,15 @@ class Breaker extends SimplePlayer
   double gunDamage = 25;
   WebsocketClient websocketClient;
   JoystickMoveDirectional? lastSocketDirection;
+  final PlayerColor color;
   Breaker({
     required super.position,
     required this.websocketClient,
+    required this.color,
     this.enabledMouse = false,
   }) : super(
           size: Vector2.all(64),
-          animation: PlayerSpriteSheet.animation,
+          animation: PlayerSpriteSheet.animation(color),
           speed: 60,
         ) {
     enabledDiagonalMovements = false;
@@ -79,7 +81,7 @@ class Breaker extends SimplePlayer
 
   @override
   void onMount() {
-    add(gun = BreakerCannon(this));
+    add(gun = BreakerCannon(color));
     super.onMount();
   }
 
@@ -141,10 +143,9 @@ class Breaker extends SimplePlayer
   void die() {
     sendMessage(DieMessage());
     animation?.playOnce(
-      PlayerSpriteSheet.die,
+      PlayerSpriteSheet.die(color),
       onFinish: removeFromParent,
     );
     super.die();
   }
-
 }

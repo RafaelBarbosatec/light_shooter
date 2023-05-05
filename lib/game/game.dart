@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:light_shooter/game/game_win_controller.dart';
 import 'package:light_shooter/game/player/breaker.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
+import 'package:light_shooter/game/util/player_customization.dart';
 import 'package:light_shooter/server_conection/server_client.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
@@ -14,12 +15,12 @@ class PlayerPropertie {
   String userId;
   String name;
   Vector2 position;
-  String skin;
+  final PlayerCustomization customization;
   PlayerPropertie({
     required this.userId,
     required this.position,
     this.name = '',
-    this.skin = '',
+    this.customization = const PlayerCustomization(),
   });
 }
 
@@ -79,6 +80,7 @@ class _GameState extends State<Game> {
       map: WorldMapByTiled('maps/map1.tmj'),
       player: Breaker(
         position: widget.properties.myProperties.position * Game.tileSize,
+        color: widget.properties.myProperties.customization.color,
         websocketClient: _websocketClient,
       ),
       cameraConfig: CameraConfig(
@@ -109,8 +111,9 @@ class _GameState extends State<Game> {
       game.add(
         RemoteBreaker(
           id: element.userId,
-          websocketClient: _websocketClient,
           position: element.position * Game.tileSize,
+          color: element.customization.color,
+          websocketClient: _websocketClient,
         ),
       );
     }
