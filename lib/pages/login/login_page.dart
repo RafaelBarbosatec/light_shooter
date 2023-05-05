@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:light_shooter/pages/home/home_route.dart';
 import 'package:light_shooter/pages/login/bloc/login_bloc.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
@@ -169,17 +170,30 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const Align(
+              Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    'Buit with Bonfire',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GifView.asset(
+                        'assets/bonfire.gif',
+                        height: 50,
+                        width: 50,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        'Buit with Bonfire',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
