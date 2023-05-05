@@ -1,8 +1,10 @@
-# light_shooter
+# Light Shooter 
 
-A new Flutter project.
+Game online built with [Bonfire](https://bonfire-engine.github.io/) integrated with [Nakama Game Server](https://flutter-nakama.gitbook.io/)
 
 ## Getting Started
+
+### Flutter
 
 This project is a starting point for a Flutter application.
 
@@ -14,3 +16,8 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+### Nakama server
+
+[Install Nakama with Docker Compose](https://heroiclabs.com/docs/nakama/getting-started/install/docker/)
+
