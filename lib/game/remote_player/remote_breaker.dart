@@ -42,7 +42,7 @@ class RemoteBreaker extends SimpleEnemy
 
   @override
   void onMount() {
-    gameRef.add(
+    add(
       gun = BreakerCannon(
         this,
         withScreenEffect: false,
@@ -57,7 +57,6 @@ class RemoteBreaker extends SimpleEnemy
 
   @override
   void die() {
-    gun?.removeFromParent();
     animation?.playOnce(
       PlayerSpriteSheet.die,
       onFinish: removeFromParent,

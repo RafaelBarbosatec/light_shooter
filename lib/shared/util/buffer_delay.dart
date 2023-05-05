@@ -22,19 +22,15 @@ class BufferDelay<T> {
 
   final ValueChanged<T> _listen;
 
-  int _currentIndex = 0;
-  bool isFirstEvent = true;
+  int _currentIndex = -1;
+  bool running = false;
 
   BufferDelay(this.delay, this._listen);
 
   void add(T value, DateTime time) {
     if (_timeLine.isEmpty) {
-      if (isFirstEvent) {
-        isFirstEvent = false;
-        _timeLine.add(Delay(delay));
-      }
+      _timeLine.add(Delay(delay));
       _timeLine.add(Frame<T>(value, time));
-      run();
     } else {
       Frame<T> lastFrame = _timeLine.last as Frame<T>;
       int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
@@ -46,15 +42,11 @@ class BufferDelay<T> {
       } else {
         int delayDone =
             DateTime.now().difference(lastFrame.timeRun!).inMilliseconds;
-        int delay = delayLastFrame - delayDone;
+        int delay = delayLastFrame - (delayDone + this.delay);
         if (delay > 0) {
-          if (delay > this.delay) {
-            delay = this.delay;
-          }
-          _timeLine.add(Delay(delay));
+          _timeLine.add(Delay(delay > this.delay ? this.delay : delay));
         }
         _timeLine.add(Frame(value, time));
-        verifyNext();
       }
     }
   }
@@ -63,28 +55,34 @@ class BufferDelay<T> {
     Frame f = _timeLine.whereType<Frame>().last;
     if (f.timeRun != null) {
       _timeLine.clear();
-      _currentIndex = 0;
+      _currentIndex = -1;
     }
   }
 
   void run() async {
-    if (_currentIndex < _timeLine.length) {
+    if ((_currentIndex + 1) < _timeLine.length && !running) {
+      running = true;
+      _currentIndex++;
       var value = _timeLine[_currentIndex];
       if (value is Delay<T>) {
         await Future.delayed(Duration(milliseconds: value.time));
-        verifyNext();
       } else if (value is Frame<T>) {
         value.timeRun = DateTime.now();
         _listen(value.value);
-        verifyNext();
       }
+      running = false;
+    } else {
+      _removeUtilRestFive();
     }
   }
 
-  void verifyNext() {
-    if ((_currentIndex + 1) < _timeLine.length) {
-      _currentIndex++;
-      run();
+  void _removeUtilRestFive() {
+    if (_timeLine.length > 10) {
+      var diff = _timeLine.length - 10;
+      List.generate(diff, (index) {
+        _timeLine.removeAt(0);
+        _currentIndex--;
+      });
     }
   }
 }

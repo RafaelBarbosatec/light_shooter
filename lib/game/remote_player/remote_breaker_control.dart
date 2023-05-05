@@ -18,7 +18,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
 
   @override
   void onMount() {
-    buffer = BufferDelay(80, _listenEventBuffer);
+    buffer = BufferDelay(30, _listenEventBuffer);
     breaker.websocketClient.addOnMatchDataObserser(_onDataObserver);
     super.onMount();
   }
@@ -38,6 +38,7 @@ mixin RemoteBreakerControl on SimpleEnemy {
 
   @override
   void update(double dt) {
+    buffer.run();
     switch (_remoteDirection) {
       case JoystickMoveDirectional.MOVE_UP:
         moveUp(speed);

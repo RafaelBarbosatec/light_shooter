@@ -79,7 +79,7 @@ class Breaker extends SimplePlayer
 
   @override
   void onMount() {
-    gameRef.add(gun = BreakerCannon(this));
+    add(gun = BreakerCannon(this));
     super.onMount();
   }
 
@@ -140,11 +140,11 @@ class Breaker extends SimplePlayer
   @override
   void die() {
     sendMessage(DieMessage());
-    gun?.removeFromParent();
     animation?.playOnce(
       PlayerSpriteSheet.die,
       onFinish: removeFromParent,
     );
     super.die();
   }
+
 }
