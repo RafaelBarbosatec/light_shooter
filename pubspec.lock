@@ -147,14 +147,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  get_it:
-    dependency: "direct dev"
-    description:
-      name: get_it
-      sha256: f9982979e3d2f286a957c04d2c3a98f55b0f0a06ffd6c5c4abbb96f06937f463
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.3.0"
   googleapis_auth:
     dependency: transitive
     description:
@@ -260,7 +252,7 @@ packages:
     source: hosted
     version: "1.8.0"
   nakama:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: "."
       ref: refresh-token-can-be-null

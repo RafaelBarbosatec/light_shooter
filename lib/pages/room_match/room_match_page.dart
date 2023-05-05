@@ -119,9 +119,9 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     );
   }
 
-  void _cancelMatchMaker() async {
+  void _cancelMatchMaker({bool backScreen = true}) async {
     await _websocketClient.exitMatchmaker();
-    if (mounted) {
+    if (mounted && backScreen) {
       Navigator.pop(context);
     }
   }
@@ -140,7 +140,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
     GameProperties properties = _getGameProperties(event);
     _websocketClient.joinMatch(event).then((value) {
       if (mounted) {
-        _cancelMatchMaker();
+        _cancelMatchMaker(backScreen: false);
         GameRoute.open(context, properties);
       }
     });

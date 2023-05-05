@@ -31,6 +31,10 @@ dependencies:
     sdk: flutter
 
   bonfire: ^2.12.5
+  nakama: 
+    git:
+        url: https://github.com/RafaelBarbosatec/flutter_nakama.git
+        ref: refresh-token-can-be-null
 
 dev_dependencies:
   flutter_test:
@@ -42,11 +46,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  nakama: 
-    git:
-        url: https://github.com/RafaelBarbosatec/flutter_nakama.git
-        ref: refresh-token-can-be-null
-  get_it: ^7.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

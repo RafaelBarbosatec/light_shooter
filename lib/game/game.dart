@@ -92,7 +92,7 @@ class _GameState extends State<Game> {
         ),
         onReady: _onReady,
         onDispose: () => _websocketClient.leaveMatch(),
-        components: [GameWinController(_serverClient)],
+        components: [GameWinController()],
       ),
     );
   }
@@ -116,7 +116,6 @@ class _GameState extends State<Game> {
           id: element.userId,
           position: element.position * Game.tileSize,
           color: element.customization.color,
-          websocketClient: _websocketClient,
         ),
       );
     }

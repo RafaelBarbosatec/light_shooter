@@ -7,26 +7,29 @@ import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/base/message_code.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
+import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/util/buffer_delay.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
-mixin RemoteBreakerControl on SimpleEnemy {
+class RemoteBreakerControlller extends StateController<RemoteBreaker> {
+  final WebsocketClient websocketClient;
   late BufferDelay<Message> buffer;
   JoystickMoveDirectional? _remoteDirection;
-  RemoteBreaker get breaker => this as RemoteBreaker;
+
+  RemoteBreakerControlller(this.websocketClient);
 
   @override
-  void onMount() {
+  void onReady(RemoteBreaker component) {
     buffer = BufferDelay(40, _listenEventBuffer);
-    breaker.websocketClient.addOnMatchDataObserser(_onDataObserver);
-    super.onMount();
+    websocketClient.addOnMatchDataObserser(_onDataObserver);
+    super.onReady(component);
   }
 
   @override
-  void die() {
-    breaker.websocketClient.removeOnMatchDataObserser(_onDataObserver);
-    super.die();
+  void onRemove(RemoteBreaker component) {
+    websocketClient.removeOnMatchDataObserser(_onDataObserver);
+    super.onRemove(component);
   }
 
   void _onDataObserver(MatchData data) {
@@ -37,24 +40,24 @@ mixin RemoteBreakerControl on SimpleEnemy {
   }
 
   @override
-  void update(double dt) {
+  void update(double dt, RemoteBreaker component) {
     buffer.run();
     switch (_remoteDirection) {
       case JoystickMoveDirectional.MOVE_UP:
-        moveUp(speed);
+        component.moveUp(component.speed);
         break;
       case JoystickMoveDirectional.MOVE_RIGHT:
-        moveRight(speed);
+        component.moveRight(component.speed);
         break;
       case JoystickMoveDirectional.MOVE_DOWN:
-        moveDown(speed);
+        component.moveDown(component.speed);
         break;
       case JoystickMoveDirectional.MOVE_LEFT:
-        moveLeft(speed);
+        component.moveLeft(component.speed);
         break;
       case JoystickMoveDirectional.IDLE:
         _remoteDirection = null;
-        idle();
+        component.idle();
         break;
       case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
         break;
@@ -66,7 +69,6 @@ mixin RemoteBreakerControl on SimpleEnemy {
         break;
       default:
     }
-    super.update(dt);
   }
 
   void _listenEventBuffer(Message value) {
@@ -78,8 +80,8 @@ mixin RemoteBreakerControl on SimpleEnemy {
         _doAttack(value);
         break;
       case MessageCodeEnum.die:
-        if (!isDead) {
-          die();
+        if (!(component?.isDead == true)) {
+          component?.die();
         }
         break;
       case MessageCodeEnum.receiveDamage:
@@ -93,20 +95,20 @@ mixin RemoteBreakerControl on SimpleEnemy {
     _remoteDirection = JoystickMoveDirectional.values.firstWhere(
       (element) => element.name == move.direction,
     );
-    speed = move.speed;
-    position = move.position;
+    component?.speed = move.speed;
+    component?.position = move.position;
   }
 
   void _doAttack(Message value) {
     final attack = AttackMessage.fromMessage(value);
-    breaker.gun?.changeAngle(attack.angle);
+    component?.gun?.changeAngle(attack.angle);
     if (attack.damage > 0) {
-      breaker.gun?.execShoot(attack.angle, attack.damage);
+      component?.gun?.execShoot(attack.angle, attack.damage);
     }
   }
 
   void _doReceiveDamage(Message value) {
     final msg = ReceiveDamageMessage.fromMessage(value);
-    removeLife(msg.damage);
+    component?.removeLife(msg.damage);
   }
 }
