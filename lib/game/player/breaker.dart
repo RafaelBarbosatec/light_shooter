@@ -21,10 +21,12 @@ class Breaker extends SimplePlayer
   WebsocketClient websocketClient;
   JoystickMoveDirectional? lastSocketDirection;
   final PlayerColor color;
+  final String name;
   Breaker({
     required super.position,
     required this.websocketClient,
     required this.color,
+    this.name = '',
     this.enabledMouse = false,
   }) : super(
           size: Vector2.all(64),

@@ -12,7 +12,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   final bool withScreenEffect;
   final AttackFromEnum attackFrom;
   final PlayerColor color;
-  int _countBullet = 10;
+  int _countBullet = 5;
   BreakerCannon(
     this.color, {
     this.withScreenEffect = true,

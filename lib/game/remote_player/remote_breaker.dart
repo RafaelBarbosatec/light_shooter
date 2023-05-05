@@ -12,11 +12,13 @@ class RemoteBreaker extends SimpleEnemy
   BreakerCannon? gun;
   final String id;
   final PlayerColor color;
+  final String name;
 
   RemoteBreaker({
     required this.id,
     required super.position,
     required this.color,
+    this.name = '',
   }) : super(
           size: Vector2.all(64),
           animation: PlayerSpriteSheet.animation(color),

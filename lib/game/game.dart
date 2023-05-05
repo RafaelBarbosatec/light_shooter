@@ -83,6 +83,7 @@ class _GameState extends State<Game> {
         player: Breaker(
           position: widget.properties.myProperties.position * Game.tileSize,
           color: widget.properties.myProperties.customization.color,
+          name: widget.properties.myProperties.name,
           websocketClient: _websocketClient,
         ),
         cameraConfig: CameraConfig(
@@ -116,6 +117,7 @@ class _GameState extends State<Game> {
           id: element.userId,
           position: element.position * Game.tileSize,
           color: element.customization.color,
+          name: element.name,
         ),
       );
     }
