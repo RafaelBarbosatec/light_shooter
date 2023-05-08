@@ -63,21 +63,21 @@ class _GameState extends State<Game> {
       child: BonfireWidget(
         joystick: Joystick(
           keyboardConfig: KeyboardConfig(
-            keyboardDirectionalType: KeyboardDirectionalType.wasd,
+            keyboardDirectionalType: KeyboardDirectionalType.wasdAndArrows,
           ),
-          directional: JoystickDirectional(),
-          actions: [
-            JoystickAction(
-              actionId: 1,
-              margin: const EdgeInsets.all(50),
-              enableDirection: true,
-            ),
-            JoystickAction(
-              actionId: 2,
-              margin: const EdgeInsets.only(right: 150, bottom: 50),
-              color: Colors.yellow,
-            ),
-          ],
+          // directional: JoystickDirectional(),
+          // actions: [
+          //   JoystickAction(
+          //     actionId: 1,
+          //     margin: const EdgeInsets.all(50),
+          //     enableDirection: true,
+          //   ),
+          //   JoystickAction(
+          //     actionId: 2,
+          //     margin: const EdgeInsets.only(right: 150, bottom: 50),
+          //     color: Colors.yellow,
+          //   ),
+          // ],
         ),
         map: WorldMapByTiled('maps/map1.tmj'),
         player: Breaker(

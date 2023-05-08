@@ -48,6 +48,7 @@ class RemoteBreaker extends SimpleEnemy
       gun = BreakerCannon(
         color,
         withScreenEffect: false,
+        blockShootWithoutBullet: false,
         attackFrom: AttackFromEnum.ENEMY,
       ),
     );

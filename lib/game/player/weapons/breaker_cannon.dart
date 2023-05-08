@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +7,21 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   double dt = 0;
+  final double timeToReload = 5;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
   final bool withScreenEffect;
   final AttackFromEnum attackFrom;
   final PlayerColor color;
+  final bool blockShootWithoutBullet;
+  SpriteAnimation? _normalAnimation;
+  SpriteAnimation? _reloadAnimation;
   int _countBullet = 5;
+  bool reloading = false;
+  double currentTimeReload = 0;
   BreakerCannon(
     this.color, {
     this.withScreenEffect = true,
+    this.blockShootWithoutBullet = true,
     this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY,
   }) {
     size = Vector2.all(64);
@@ -28,12 +34,23 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
     isFlipHorizontally =
         (followerTarget as Movement).lastDirectionHorizontal != Direction.right;
 
+    if (reloading) {
+      currentTimeReload += dt;
+      if (currentTimeReload >= timeToReload) {
+        reloading = false;
+        _countBullet = 5;
+        animation = _normalAnimation;
+      } else {
+        animation = _reloadAnimation;
+      }
+    }
     super.update(dt);
   }
 
   @override
   Future<void>? onLoad() async {
-    animation = await PlayerSpriteSheet.gun(color);
+    _reloadAnimation = await PlayerSpriteSheet.gunReload(color);
+    animation = _normalAnimation = await PlayerSpriteSheet.gun(color);
     return super.onLoad();
   }
 
@@ -47,7 +64,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
   }
 
   void execShoot(double radAngle, double damage) {
-    if (_countBullet <= 0) {
+    if (_countBullet <= 0 && blockShootWithoutBullet) {
       return;
     }
     playSpriteAnimationOnce(
@@ -78,6 +95,9 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
 
     gameRef.add(BulletCapsule(center, _getAnglecapsule(radAngle)));
     _countBullet--;
+    if (_countBullet == 0) {
+      reloading = true;
+    }
   }
 
   void changeAngle(double radAngle) {
@@ -86,10 +106,6 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
 
   double calculeNewAngle(double radAngle) {
     return radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
-  }
-
-  void changeLerpAngle(double newAngle, double dt) {
-    angle = lerpDouble(angle, newAngle, dt * 4) ?? 0.0;
   }
 
   double _getAnglecapsule(double radAngle) {

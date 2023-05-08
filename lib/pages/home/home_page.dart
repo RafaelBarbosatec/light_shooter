@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                             GameButton(
                               expanded: true,
                               onPressed: _createMatchMaker,
-                              text: 'Start',
+                              text: 'Play',
                             ),
                           ],
                         ),
