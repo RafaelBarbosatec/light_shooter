@@ -3,9 +3,9 @@
 
 
 
-| Login  | Home |
-| ------------- | ------------- |
-| ![](https://github.com/RafaelBarbosatec/light_shooter/blob/nakama/imgs/login_screen_shot.png)  | ![](https://github.com/RafaelBarbosatec/light_shooter/blob/nakama/imgs/home_screen_shot.png)  |
+| Login  | Home | Game |
+| ------------- | ------------- | ------------- |
+| ![](https://github.com/RafaelBarbosatec/light_shooter/blob/nakama/imgs/login_screen_shot.png)  | ![](https://github.com/RafaelBarbosatec/light_shooter/blob/nakama/imgs/home_screen_shot.png)  | ![](https://github.com/RafaelBarbosatec/light_shooter/blob/nakama/imgs/game_screen_shot.png) |
 
 Game online built with [Bonfire](https://bonfire-engine.github.io/) integrated with [Nakama Game Server](https://flutter-nakama.gitbook.io/)
 
