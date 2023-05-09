@@ -19,9 +19,7 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
 
   List<Vector2> positionsToBorn = [
     Vector2(3, 3),
-    Vector2(30, 14),
-    Vector2(16, 15),
-    Vector2(18, 8),
+    Vector2(15, 15),
   ];
 
   StreamSubscription? subscription;

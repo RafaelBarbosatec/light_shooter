@@ -1,4 +1,5 @@
 import 'package:bonfire/bonfire.dart';
+import 'package:light_shooter/game/player/breaker.dart';
 
 class Poison extends GameComponent with Sensor {
   static const name = 'poison';
@@ -9,7 +10,7 @@ class Poison extends GameComponent with Sensor {
 
   @override
   void onContact(GameComponent component) {
-    if (component is Attackable) {
+    if (component is Breaker) {
       component.removeLife(10);
     }
   }

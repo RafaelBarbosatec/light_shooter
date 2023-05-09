@@ -56,8 +56,7 @@ class RemoteBreaker extends SimpleEnemy
   }
 
   @override
-  bool checkCanReceiveDamage(AttackFromEnum attacker) {
-    return false;
+  void receiveDamage(AttackFromEnum attacker, double damage, identify) {
   }
 
   @override
@@ -67,14 +66,5 @@ class RemoteBreaker extends SimpleEnemy
       onFinish: removeFromParent,
     );
     super.die();
-  }
-
-  @override
-  void removeLife(double life) {
-    showDamage(
-      life,
-      config: const TextStyle(fontSize: 14, color: Colors.red),
-    );
-    super.removeLife(life);
   }
 }

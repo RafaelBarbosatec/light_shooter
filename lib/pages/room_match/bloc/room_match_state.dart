@@ -19,7 +19,7 @@ class RoomMatchState {
     bool? goBack,
   }) {
     return RoomMatchState(
-      gameProperties: gameProperties ?? this.gameProperties,
+      gameProperties: gameProperties,
       ticket: ticket ?? this.ticket,
       goBack: goBack ?? false,
     );

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bonfire/bonfire.dart';
+import 'package:flutter/material.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
@@ -33,10 +34,12 @@ class RemoteBreakerControlller extends StateController<RemoteBreaker> {
   }
 
   void _onDataObserver(MatchData data) {
-    String dataString = String.fromCharCodes(data.data);
-    final json = jsonDecode(dataString);
-    Message m = Message.fromJson(json);
-    buffer.add(m, m.date);
+    if (data.presence.userId == component?.id) {
+      String dataString = String.fromCharCodes(data.data);
+      final json = jsonDecode(dataString);
+      Message m = Message.fromJson(json);
+      buffer.add(m, m.date);
+    }
   }
 
   @override
@@ -109,6 +112,10 @@ class RemoteBreakerControlller extends StateController<RemoteBreaker> {
 
   void _doReceiveDamage(Message value) {
     final msg = ReceiveDamageMessage.fromMessage(value);
+    component?.showDamage(
+      msg.damage,
+      config: const TextStyle(fontSize: 14, color: Colors.red),
+    );
     component?.removeLife(msg.damage);
   }
 }

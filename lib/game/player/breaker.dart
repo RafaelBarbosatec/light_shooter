@@ -53,9 +53,15 @@ class Breaker extends SimplePlayer
   void joystickAction(JoystickActionEvent event) {
     if (event.id == 1) {
       if (event.event == ActionEvent.MOVE) {
-        bool shoot = gun?.execShootAndChangeAngle(event.radAngle, 100) ?? false;
-        if (shoot) {
-          _sendShoot(event.radAngle, gunDamage);
+        if (gun?.reloading == false) {
+          bool shoot = gun?.execShootAndChangeAngle(
+                event.radAngle,
+                gunDamage,
+              ) ??
+              false;
+          if (shoot) {
+            _sendShoot(event.radAngle, gunDamage);
+          }
         }
       }
       if (event.event == ActionEvent.UP) {
@@ -111,8 +117,10 @@ class Breaker extends SimplePlayer
       gun?.center ?? center,
       gameRef.screenToWorld(position),
     );
-    gun?.execShoot(angle, 100);
-    _sendShoot(angle, gunDamage);
+    if (gun?.reloading == false) {
+      gun?.execShoot(angle, gunDamage);
+      _sendShoot(angle, gunDamage);
+    }
     super.onMouseScreenTapDown(pointer, position, button);
   }
 

@@ -145,7 +145,9 @@ class WebsocketClient {
   }
 
   void addOnMatchDataObserser(Function(MatchData data) observer) {
-    _onMatchDataObservers.add(observer);
+    if (_onMatchDataObservers.where((element) => element == observer).isEmpty) {
+      _onMatchDataObservers.add(observer);
+    }
   }
 
   void removeOnMatchDataObserser(Function(MatchData data) observer) {
@@ -153,7 +155,11 @@ class WebsocketClient {
   }
 
   void addOnMatchPresenceObserser(Function(MatchPresenceEvent data) observer) {
-    _onMatchPresenceObservers.add(observer);
+    if (_onMatchPresenceObservers
+        .where((element) => element == observer)
+        .isEmpty) {
+      _onMatchPresenceObservers.add(observer);
+    }
   }
 
   void removeOnMatchPresenceObserser(
