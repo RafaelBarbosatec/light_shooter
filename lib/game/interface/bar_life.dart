@@ -19,7 +19,7 @@ class BarLife extends StatefulWidget {
 class _BarLifeState extends State<BarLife> {
   final double BAR_WIDTH = 100;
   final double BAR_HEIGHT = 20;
-  final double BORDER_RADIUS = 10;
+  final double BORDER_RADIUS = 5;
 
   @override
   void initState() {
