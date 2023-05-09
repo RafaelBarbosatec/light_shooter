@@ -56,7 +56,9 @@ class RemoteBreaker extends SimpleEnemy
   }
 
   @override
-  void receiveDamage(AttackFromEnum attacker, double damage, identify) {}
+  bool checkCanReceiveDamage(AttackFromEnum attacker) {
+    return false;
+  }
 
   @override
   void die() {
