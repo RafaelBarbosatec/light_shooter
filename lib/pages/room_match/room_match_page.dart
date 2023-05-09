@@ -64,7 +64,7 @@ class _RoomMatchPageState extends State<RoomMatchPage> {
           children: [
             const Center(
               child: Text(
-                'Looking for players',
+                'Looking for player',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

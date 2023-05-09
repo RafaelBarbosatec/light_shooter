@@ -13,7 +13,8 @@ import 'package:light_shooter/server_conection/messages/receive_damage_message.d
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
 class Breaker extends SimplePlayer
-    with ObjectCollision, MouseGesture, Lighting {
+    with ObjectCollision, MouseGesture, Lighting, ChangeNotifier {
+  static const double maxLive = 100;
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
@@ -32,6 +33,7 @@ class Breaker extends SimplePlayer
           size: Vector2.all(64),
           animation: PlayerSpriteSheet.animation(color),
           speed: 60,
+          life: maxLive,
         ) {
     enabledDiagonalMovements = false;
     // enableMouseGesture = enabledMouse;
@@ -93,6 +95,7 @@ class Breaker extends SimplePlayer
     gameRef.colorFilter?.animateTo(Colors.transparent);
     sendMessage(ReceiveDamageMessage(life));
     super.removeLife(life);
+    notifyListeners();
   }
 
   @override

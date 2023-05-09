@@ -2,6 +2,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/game_win_controller.dart';
+import 'package:light_shooter/game/interface/bar_life.dart';
 import 'package:light_shooter/game/player/breaker.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_customization.dart';
@@ -65,20 +66,13 @@ class _GameState extends State<Game> {
           keyboardConfig: KeyboardConfig(
             keyboardDirectionalType: KeyboardDirectionalType.wasdAndArrows,
           ),
-          // directional: JoystickDirectional(),
-          // actions: [
-          //   JoystickAction(
-          //     actionId: 1,
-          //     margin: const EdgeInsets.all(50),
-          //     enableDirection: true,
-          //   ),
-          //   JoystickAction(
-          //     actionId: 2,
-          //     margin: const EdgeInsets.only(right: 150, bottom: 50),
-          //     color: Colors.yellow,
-          //   ),
-          // ],
         ),
+        overlayBuilderMap: {
+          BarLife.name: (context, game) => BarLife(game: game),
+        },
+        initialActiveOverlays: [
+          BarLife.name,
+        ],
         map: WorldMapByTiled('maps/map1.tmj'),
         player: Breaker(
           position: widget.properties.myProperties.position * Game.tileSize,

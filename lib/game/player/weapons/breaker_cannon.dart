@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/bullet_capsule.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
-class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
+class BreakerCannon extends GameComponent
+    with Follower, UseSpriteAnimation, ChangeNotifier {
   double dt = 0;
   final double timeToReload = 5;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
@@ -43,6 +44,7 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
       } else {
         animation = _reloadAnimation;
       }
+      notifyListeners();
     }
     super.update(dt);
   }
@@ -96,8 +98,10 @@ class BreakerCannon extends GameComponent with Follower, UseSpriteAnimation {
     gameRef.add(BulletCapsule(center, _getAnglecapsule(radAngle)));
     _countBullet--;
     if (_countBullet == 0) {
+      currentTimeReload = 0;
       reloading = true;
     }
+    notifyListeners();
   }
 
   void changeAngle(double radAngle) {
