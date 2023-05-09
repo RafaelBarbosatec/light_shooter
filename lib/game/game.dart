@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'package:light_shooter/game/decorations/poiston.dart';
 import 'package:light_shooter/game/game_win_controller.dart';
 import 'package:light_shooter/game/interface/bar_life.dart';
 import 'package:light_shooter/game/player/breaker.dart';
@@ -73,7 +74,12 @@ class _GameState extends State<Game> {
         initialActiveOverlays: [
           BarLife.name,
         ],
-        map: WorldMapByTiled('maps/map1.tmj'),
+        map: WorldMapByTiled(
+          'maps/map1.tmj',
+          objectsBuilder: {
+            Poison.name: (prop) => Poison(prop.position, prop.size)
+          },
+        ),
         player: Breaker(
           position: widget.properties.myProperties.position * Game.tileSize,
           color: widget.properties.myProperties.customization.color,

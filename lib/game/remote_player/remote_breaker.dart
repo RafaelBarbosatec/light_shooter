@@ -66,4 +66,13 @@ class RemoteBreaker extends SimpleEnemy
     );
     super.die();
   }
+
+  @override
+  void removeLife(double life) {
+    showDamage(
+      life,
+      config: const TextStyle(fontSize: 14, color: Colors.red),
+    );
+    super.removeLife(life);
+  }
 }

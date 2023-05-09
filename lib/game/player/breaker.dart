@@ -94,6 +94,10 @@ class Breaker extends SimplePlayer
     gameRef.colorFilter?.config.color = flashDamage;
     gameRef.colorFilter?.animateTo(Colors.transparent);
     sendMessage(ReceiveDamageMessage(life));
+    showDamage(
+      life,
+      config: const TextStyle(fontSize: 14, color: Colors.red),
+    );
     super.removeLife(life);
     notifyListeners();
   }
