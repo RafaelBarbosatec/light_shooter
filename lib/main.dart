@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:light_shooter/game/game.dart';
-import 'package:light_shooter/pages/home_page.dart';
+import 'package:light_shooter/game/game_route.dart';
+import 'package:light_shooter/pages/login/login_route.dart';
+import 'package:light_shooter/pages/room_match/room_match_route.dart';
+import 'package:light_shooter/shared/bootstrap.dart';
+
+import 'pages/home/home_route.dart';
 
 void main() {
+  Bootstrap.run();
   runApp(const MyApp());
 }
 
@@ -17,8 +22,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => const HomePage(),
-        '/game':(context) => const Game(),
+        ...LoginRoute.builder,
+        ...HomeRoute.builder,
+        ...RoomMatchRoute.builder,
+        ...GameRoute.builder,
       },
     );
   }

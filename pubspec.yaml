@@ -30,7 +30,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  bonfire: ^2.12.4
+  bonfire: ^2.12.5
+  flutter_bloc: ^8.1.2
+  gif_view: ^0.3.1
+  nakama: 
+    git:
+        url: https://github.com/RafaelBarbosatec/flutter_nakama.git
+        ref: refresh-token-can-be-null
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +62,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
     - assets/images/
     - assets/images/maps/
 
