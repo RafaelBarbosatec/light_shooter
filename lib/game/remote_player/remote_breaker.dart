@@ -1,10 +1,11 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
+import 'package:light_shooter/game/remote_player/remote_breaker_controlller.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class RemoteBreaker extends SimpleEnemy
-    with BlockMovementCollision, UseLifeBar {
+    with BlockMovementCollision, UseLifeBar, RemoteBreakerControlller {
   BreakerCannon? gun;
   final String id;
   final PlayerColor color;
@@ -20,17 +21,6 @@ class RemoteBreaker extends SimpleEnemy
           animation: PlayerSpriteSheet.animation(color),
           speed: 60,
         ) {
-    // setupCollision(
-    //   CollisionConfig(
-    //     collisions: [
-    //       CollisionArea.rectangle(
-    //         size: size / 4,
-    //         align: Vector2(size.y * 0.35, size.x * 0.70),
-    //       ),
-    //     ],
-    //   ),
-    // );
-
     setupLifeBar(
       size: Vector2(width / 2, 6),
       borderRadius: BorderRadius.circular(10),

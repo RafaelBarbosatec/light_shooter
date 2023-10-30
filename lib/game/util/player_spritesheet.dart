@@ -1,5 +1,4 @@
 import 'package:bonfire/bonfire.dart';
-import 'package:flutter/material.dart';
 
 enum PlayerColor {
   blue,

@@ -1,11 +1,21 @@
+import 'package:bonfire/bonfire.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class Timeline<T> {}
 
+class Empty<T> extends Timeline<T> {}
+
 class Delay<T> extends Timeline<T> {
   final int time;
+  late Timer _timer;
 
-  Delay(this.time);
+  Delay(this.time) {
+    _timer = Timer(time / 1000);
+  }
+  bool update(double dt) {
+    _timer.update(dt);
+    return _timer.finished;
+  }
 }
 
 class Frame<T> extends Timeline<T> {
@@ -24,63 +34,88 @@ class Frame<T> extends Timeline<T> {
   }
 }
 
-class BufferDelay<T> {
-  static const maxItemTimeLine = 10;
+class EventQueue<T> {
+  final int bufferSize;
   final int delay;
-  final List<Timeline<T>> _timeLine = [];
+  late List<Timeline<T>> _timeLine;
 
-  final ValueChanged<T> _listen;
+  ValueChanged<T>? listen;
 
-  int _currentIndex = -1;
-  bool running = false;
+  int _currentIndex = 0;
+  int _headIndex = 0;
 
-  BufferDelay(this.delay, this._listen);
+  late Timeline<T> _current;
+
+  EventQueue(this.delay, {this.bufferSize = 40}) {
+    _timeLine = List.filled(bufferSize, Empty());
+  }
 
   void add(T value, DateTime time) {
-    if (_timeLine.isEmpty) {
-      addTimeLine(Delay(delay));
-      addTimeLine(Frame<T>(value, time));
+    if (isEmpty()) {
+      _add(Delay(delay));
+      _add(Frame<T>(value, time));
+      _current = _timeLine.first;
     } else {
-      Frame<T> lastFrame = _timeLine.last as Frame<T>;
-      if (lastFrame.time.isBefore(time)) {
-        int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
-        if (lastFrame.timeRun == null) {
-          if (delayLastFrame > 0) {
-            addTimeLine(Delay(delayLastFrame));
-          }
-          addTimeLine(Frame(value, time));
-        } else {
-          int delayDone = lastFrame.differenceTimeRun;
-          int delay = delayLastFrame - (delayDone + this.delay);
-          if (delay > 0) {
-            addTimeLine(Delay(delay > this.delay ? this.delay : delay));
-          }
-          addTimeLine(Frame(value, time));
+      Frame<T> lastFrame = _timeLine[_getLastHeadIndex()] as Frame<T>;
+      int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
+      if (lastFrame.timeRun == null) {
+        _add(Delay(delayLastFrame));
+      } else {
+        int timeExecuted = lastFrame.differenceTimeRun;
+        int delay = delayLastFrame - timeExecuted;
+        if (delay > 0) {
+          _add(Delay(delay <= this.delay ? delay : 0));
         }
       }
+      _add(Frame(value, time));
     }
   }
 
-  void run() async {
-    if ((_currentIndex + 1) < _timeLine.length && !running) {
-      running = true;
-      _currentIndex++;
-      var value = _timeLine[_currentIndex];
-      if (value is Delay<T>) {
-        await Future.delayed(Duration(milliseconds: value.time));
-      } else if (value is Frame<T>) {
-        value.timeRun = DateTime.now();
-        _listen(value.value);
+  void run(double dt) async {
+    if (_current is Delay<T>) {
+      if ((_current as Delay).update(dt)) {
+        _next();
       }
-      running = false;
+    } else if (_current is Frame<T>) {
+      if ((_current as Frame).timeRun == null) {
+        (_current as Frame).timeRun = DateTime.now();
+        listen?.call((_current as Frame).value);
+      }
+      _next();
     }
   }
 
-  void addTimeLine(Timeline<T> timeline) {
-    _timeLine.add(timeline);
-    if (_timeLine.length > maxItemTimeLine) {
-      _timeLine.removeAt(0);
-      _currentIndex--;
+  void _next() {
+    if (haveNext()) {
+      _currentIndex++;
+      _current = _timeLine[_getIndex()];
     }
+  }
+
+  int _getIndex() {
+    return _currentIndex % bufferSize;
+  }
+
+  int _getHeadIndex() {
+    return _headIndex % bufferSize;
+  }
+
+  int _getLastHeadIndex() {
+    return (_headIndex - 1) % bufferSize;
+  }
+
+  bool haveNext() {
+    int nextIndex = (_currentIndex + 1) % bufferSize;
+    return _timeLine[nextIndex] is! Empty;
+  }
+
+  bool isEmpty() {
+    return _timeLine.where((element) => element is! Empty).isEmpty;
+  }
+
+  void _add(Timeline<T> timeline) {
+    _timeLine[_getHeadIndex()] = timeline;
+    _headIndex++;
+    _timeLine[_getHeadIndex()] = Empty();
   }
 }

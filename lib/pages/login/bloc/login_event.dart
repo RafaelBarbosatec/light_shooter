@@ -15,7 +15,7 @@ class SignUpEvent extends LoginEvent {
   final String email;
   final String password;
 
-  SignUpEvent(this.username,this.email, this.password);
+  SignUpEvent(this.username, this.email, this.password);
 }
 
 class ClickSignUpEvent extends LoginEvent {

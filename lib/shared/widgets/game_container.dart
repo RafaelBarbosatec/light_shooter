@@ -4,8 +4,9 @@ import 'package:light_shooter/shared/theme/game_colors.dart';
 class GameContainer extends StatelessWidget {
   final Widget child;
   final BoxConstraints? constraints;
-    final EdgeInsetsGeometry? margin;
-  const GameContainer({super.key, required this.child, this.constraints, this.margin});
+  final EdgeInsetsGeometry? margin;
+  const GameContainer(
+      {super.key, required this.child, this.constraints, this.margin});
 
   @override
   Widget build(BuildContext context) {

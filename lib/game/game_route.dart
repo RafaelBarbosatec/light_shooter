@@ -5,9 +5,10 @@ class GameRoute {
   static const name = '/game';
 
   static Map<String, WidgetBuilder> get builder => {
-        name: (context) =>  Game(
-          properties: ModalRoute.of(context)?.settings.arguments as GameProperties,
-        ),
+        name: (context) => Game(
+              properties:
+                  ModalRoute.of(context)?.settings.arguments as GameProperties,
+            ),
       };
 
   static Future open(BuildContext context, GameProperties properties) {

@@ -1,9 +1,6 @@
-import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif_view/gif_view.dart';
-import 'package:light_shooter/game/game.dart';
-import 'package:light_shooter/game/game_route.dart';
 import 'package:light_shooter/pages/home/home_route.dart';
 import 'package:light_shooter/pages/login/bloc/login_bloc.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
@@ -214,16 +211,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _doSignIn() {
-    // if (_form.currentState?.validate() == true) {
-    //   _bloc.add(SignInEvent(_email.text, _password.text));
-    // }
-    GameRoute.open(
-      context,
-      GameProperties(
-        myProperties: PlayerPropertie(userId: '', position: Vector2.all(10)),
-        opponentPositions: [],
-      ),
-    );
+    if (_form.currentState?.validate() == true) {
+      _bloc.add(SignInEvent(_email.text, _password.text));
+    }
   }
 
   void _showErrorSnackbar(BuildContext context, String error) {

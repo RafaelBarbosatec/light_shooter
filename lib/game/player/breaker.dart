@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
@@ -6,6 +8,7 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/die_message.dart';
+import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
@@ -32,18 +35,7 @@ class Breaker extends SimplePlayer
           speed: 60,
           life: maxLive,
         ) {
-    // enabledDiagonalMovements = false;
-    // enableMouseGesture = enabledMouse;
-    // setupCollision(
-    //   CollisionConfig(
-    //     collisions: [
-    //       CollisionArea.rectangle(
-    //         size: size / 4,
-    //         align: Vector2(size.y * 0.35, size.x * 0.70),
-    //       ),
-    //     ],
-    //   ),
-    // );
+    setupMovementByJoystick(diagonalEnabled: false);
   }
 
   @override
@@ -85,15 +77,10 @@ class Breaker extends SimplePlayer
 
   @override
   void onJoystickChangeDirectional(JoystickDirectionalEvent event) {
-    // bool canSend =
-    //     event.directional != JoystickMoveDirectional.MOVE_DOWN_RIGHT &&
-    //         event.directional != JoystickMoveDirectional.MOVE_DOWN_LEFT &&
-    //         event.directional != JoystickMoveDirectional.MOVE_UP_LEFT &&
-    //         event.directional != JoystickMoveDirectional.MOVE_UP_RIGHT;
-    // if (event.directional != lastSocketDirection && canSend) {
-    //   lastSocketDirection = event.directional;
-    //   sendMessage(MoveMessage(event.directional.name, position, speed));
-    // }
+    if (event.directional != lastSocketDirection) {
+      lastSocketDirection = event.directional;
+      sendMessage(MoveMessage(event.directional.name, position, speed));
+    }
     super.onJoystickChangeDirectional(event);
   }
 
@@ -160,10 +147,10 @@ class Breaker extends SimplePlayer
   }
 
   void sendMessage(Message m) {
-    // websocketClient.sendMatchData(
-    //   m.op,
-    //   jsonEncode(m.toJson()),
-    // );
+    websocketClient.sendMatchData(
+      m.op,
+      jsonEncode(m.toJson()),
+    );
   }
 
   @override

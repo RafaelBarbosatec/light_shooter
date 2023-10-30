@@ -54,8 +54,8 @@ class _GameState extends State<Game> {
   void initState() {
     _serverClient = inject();
     _websocketClient = inject();
-    // userId = _serverClient.getSession().userId;
-    // _websocketClient.addOnMatchPresenceObserser(_onMatchPresence);
+    userId = _serverClient.getSession().userId;
+    _websocketClient.addOnMatchPresenceObserser(_onMatchPresence);
     super.initState();
   }
 
