@@ -11,12 +11,11 @@ import 'package:light_shooter/server_conection/messages/receive_damage_message.d
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 import 'package:light_shooter/shared/util/buffer_delay.dart';
-// ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
-  late WebsocketClient websocketClient;
-  late EventQueue<Message> buffer;
+  WebsocketClient? websocketClient;
+  EventQueue<Message>? buffer;
   JoystickMoveDirectional? _remoteDirection;
 
   RemoteBreaker get remote => this as RemoteBreaker;
@@ -25,14 +24,14 @@ mixin RemoteBreakerControlller on SimpleEnemy {
   Future<void> onLoad() {
     websocketClient = inject();
     buffer = EventQueue(40);
-    buffer.listen = _listenEventBuffer;
-    websocketClient.addOnMatchDataObserser(_onDataObserver);
+    buffer?.listen = _listenEventBuffer;
+    websocketClient?.addOnMatchDataObserser(_onDataObserver);
     return onLoad();
   }
 
   @override
   void onRemove() {
-    websocketClient.removeOnMatchDataObserser(_onDataObserver);
+    websocketClient?.removeOnMatchDataObserser(_onDataObserver);
     super.onRemove();
   }
 
@@ -41,13 +40,13 @@ mixin RemoteBreakerControlller on SimpleEnemy {
       String dataString = String.fromCharCodes(data.data);
       final json = jsonDecode(dataString);
       Message m = Message.fromJson(json);
-      buffer.add(m, m.date);
+      buffer?.add(m, m.date);
     }
   }
 
   @override
   void update(double dt) {
-    buffer.run(dt);
+    buffer?.run(dt);
     switch (_remoteDirection) {
       case JoystickMoveDirectional.MOVE_UP:
         moveUp();

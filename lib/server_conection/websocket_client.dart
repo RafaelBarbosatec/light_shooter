@@ -35,6 +35,7 @@ class WebsocketClient {
     int maxCount = 2,
     Map<String, String>? propertiers,
   }) {
+    print('createMatchMaker');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
@@ -79,20 +80,23 @@ class WebsocketClient {
   }
 
   Future<Match> joinMatch(MatchmakerMatched matched) {
+    print('joinMatch');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
     this.matched = matched;
     return _websocketClient!
         .joinMatch(matched.matchId ?? '', token: matched.token)
-        .then((value) {
-      _startListens();
-
-      return match = value;
-    });
+        .then(
+      (value) {
+        _startListens();
+        return match = value;
+      },
+    );
   }
 
   Future leaveMatch() async {
+    print('leaveMatch');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
@@ -119,6 +123,7 @@ class WebsocketClient {
   }
 
   void _startListens() {
+    print('_startListens');
     onMatchDataSubscription =
         _websocketClient!.onMatchData.listen(_onMatchObserver);
     onMatchPresenceSubscription =
@@ -145,7 +150,7 @@ class WebsocketClient {
   }
 
   void addOnMatchDataObserser(Function(MatchData data) observer) {
-    if (_onMatchDataObservers.where((element) => element == observer).isEmpty) {
+    if (!_onMatchDataObservers.any((element) => element == observer)) {
       _onMatchDataObservers.add(observer);
     }
   }
@@ -155,9 +160,7 @@ class WebsocketClient {
   }
 
   void addOnMatchPresenceObserser(Function(MatchPresenceEvent data) observer) {
-    if (_onMatchPresenceObservers
-        .where((element) => element == observer)
-        .isEmpty) {
+    if (!_onMatchPresenceObservers.any((element) => element == observer)) {
       _onMatchPresenceObservers.add(observer);
     }
   }

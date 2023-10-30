@@ -86,12 +86,7 @@ class Breaker extends SimplePlayer
 
   @override
   void onMount() {
-    add(
-      gun = BreakerCannon(
-        Vector2(32, 44),
-        color,
-      ),
-    );
+    add(gun = BreakerCannon(Vector2(32, 44), color));
     super.onMount();
   }
 

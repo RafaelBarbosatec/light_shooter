@@ -51,7 +51,6 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
   ) async {
     GameProperties properties = _getGameProperties(event.matched);
     await _websocketClient.joinMatch(event.matched).then((value) {
-      add(CancelMatchMakerEvent(withPop: false));
       emit(state.copyWith(gameProperties: properties));
     });
   }

@@ -90,33 +90,32 @@ class _GameState extends State<Game> {
         ),
         onReady: _onReady,
         onDispose: () => _websocketClient.leaveMatch(),
-        components: [GameWinController()],
+        components: [
+          // GameWinController(),
+          // ...widget.properties.opponentPositions.map((e) {
+          //   return RemoteBreaker(
+          //     id: e.userId,
+          //     position: e.position * Game.tileSize,
+          //     color: e.customization.color,
+          //     name: e.name,
+          //   );
+          // }).toList()
+        ],
       ),
     );
   }
 
   void _onMatchPresence(MatchPresenceEvent data) {
-    if (game != null) {
-      for (var leave in data.leaves) {
-        game!
-            .query<RemoteBreaker>()
-            .where((element) => element.id == leave.userId)
-            .forEach((remote) => remote.removeFromParent());
-      }
+    print('_onMatchPresence');
+    for (var leave in data.leaves) {
+      game
+          ?.query<RemoteBreaker>()
+          .where((element) => element.id == leave.userId)
+          .forEach((remote) => remote.removeFromParent());
     }
   }
 
   void _onReady(BonfireGameInterface game) {
     this.game = game;
-    for (var element in widget.properties.opponentPositions) {
-      game.add(
-        RemoteBreaker(
-          id: element.userId,
-          position: element.position * Game.tileSize,
-          color: element.customization.color,
-          name: element.name,
-        ),
-      );
-    }
   }
 }

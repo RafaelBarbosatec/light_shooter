@@ -103,6 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                                 controller: _password,
                                 hint: 'Password',
                                 enabled: !state.loading,
+                                onFieldSubmitted: (_) {
+                                  _doSignIn();
+                                },
                                 validator: (value) {
                                   String text = value ?? '';
                                   if (text.isEmpty) {
@@ -148,8 +151,11 @@ class _LoginPageState extends State<LoginPage> {
                                 width: double.maxFinite,
                                 child: TextButton(
                                   onPressed: () {
-                                    _bloc.add(ClickSignUpEvent(
-                                        goSignUp: !state.signUpMode));
+                                    _bloc.add(
+                                      ClickSignUpEvent(
+                                        goSignUp: !state.signUpMode,
+                                      ),
+                                    );
                                   },
                                   style: const ButtonStyle(
                                     shape: MaterialStatePropertyAll(

@@ -294,10 +294,11 @@ packages:
   nakama:
     dependency: "direct main"
     description:
-      name: nakama
-      sha256: a8997009400749bdaa4f9f35e98e09271b5ff46c56995a2c67ef488727401387
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: cc832b06427f9897ce6fea254248426ee9b53790
+      resolved-ref: cc832b06427f9897ce6fea254248426ee9b53790
+      url: "https://github.com/RafaelBarbosatec/flutter_nakama.git"
+    source: git
     version: "1.0.1"
   nested:
     dependency: transitive

@@ -44,7 +44,7 @@ class EventQueue<T> {
   int _currentIndex = 0;
   int _headIndex = 0;
 
-  late Timeline<T> _current;
+  Timeline<T>? _current;
 
   EventQueue(this.delay, {this.bufferSize = 40}) {
     _timeLine = List.filled(bufferSize, Empty());
