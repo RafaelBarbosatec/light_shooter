@@ -39,7 +39,7 @@ class ServerClient {
     required String password,
     bool create = false,
   }) {
-    if (_session == null) {      
+    if (_session == null) {
       return _nakamaClient
           .authenticateEmail(
         email: email,

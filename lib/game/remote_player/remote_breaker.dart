@@ -25,7 +25,9 @@ class RemoteBreaker extends SimpleEnemy
       size: Vector2(width / 2, 6),
       borderRadius: BorderRadius.circular(10),
       barLifeDrawPosition: BarLifeDrawPorition.bottom,
+      position: Vector2(width / 8, 0),
     );
+    movementOnlyVisible = false;
   }
 
   @override

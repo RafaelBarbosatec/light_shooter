@@ -35,7 +35,6 @@ class WebsocketClient {
     int maxCount = 2,
     Map<String, String>? propertiers,
   }) {
-    print('createMatchMaker');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
@@ -80,7 +79,6 @@ class WebsocketClient {
   }
 
   Future<Match> joinMatch(MatchmakerMatched matched) {
-    print('joinMatch');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
@@ -96,7 +94,6 @@ class WebsocketClient {
   }
 
   Future leaveMatch() async {
-    print('leaveMatch');
     if (_websocketClient == null) {
       throw Exception('WebsocketClient not initializaed');
     }
@@ -123,7 +120,6 @@ class WebsocketClient {
   }
 
   void _startListens() {
-    print('_startListens');
     onMatchDataSubscription =
         _websocketClient!.onMatchData.listen(_onMatchObserver);
     onMatchPresenceSubscription =

@@ -72,6 +72,7 @@ class EventQueue<T> {
   }
 
   void run(double dt) async {
+    if (_current == null) return;
     if (_current is Delay<T>) {
       if ((_current as Delay).update(dt)) {
         _next();

@@ -60,13 +60,13 @@ class Breaker extends SimplePlayer
               ) ??
               false;
           if (shoot) {
-            _sendShoot(event.radAngle, gunDamage);
+            _sendShootMessage(event.radAngle, gunDamage);
           }
         }
       }
       if (event.event == ActionEvent.UP) {
         gun?.changeAngle(0);
-        _sendShoot(0, 0);
+        _sendShootMessage(0, 0);
       }
     }
     if (event.id == 2 && event.event == ActionEvent.DOWN) {
@@ -114,7 +114,7 @@ class Breaker extends SimplePlayer
     );
     if (gun?.reloading == false) {
       gun?.execShoot(angle, gunDamage);
-      _sendShoot(angle, gunDamage);
+      _sendShootMessage(angle, gunDamage);
     }
     super.onMouseScreenTapDown(pointer, position, button);
   }
@@ -137,7 +137,7 @@ class Breaker extends SimplePlayer
     return super.onBlockMovement(intersectionPoints, other);
   }
 
-  void _sendShoot(double angle, damage) {
+  void _sendShootMessage(double angle, damage) {
     sendMessage(AttackMessage(damage, 'cannon', angle));
   }
 

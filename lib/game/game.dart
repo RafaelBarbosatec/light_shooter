@@ -91,22 +91,13 @@ class _GameState extends State<Game> {
         onReady: _onReady,
         onDispose: () => _websocketClient.leaveMatch(),
         components: [
-          // GameWinController(),
-          // ...widget.properties.opponentPositions.map((e) {
-          //   return RemoteBreaker(
-          //     id: e.userId,
-          //     position: e.position * Game.tileSize,
-          //     color: e.customization.color,
-          //     name: e.name,
-          //   );
-          // }).toList()
+          GameWinController(),
         ],
       ),
     );
   }
 
   void _onMatchPresence(MatchPresenceEvent data) {
-    print('_onMatchPresence');
     for (var leave in data.leaves) {
       game
           ?.query<RemoteBreaker>()
@@ -117,5 +108,15 @@ class _GameState extends State<Game> {
 
   void _onReady(BonfireGameInterface game) {
     this.game = game;
+    for (var e in widget.properties.opponentPositions) {
+      game.add(
+        RemoteBreaker(
+          id: e.userId,
+          position: e.position * Game.tileSize,
+          color: e.customization.color,
+          name: e.name,
+        ),
+      );
+    }
   }
 }

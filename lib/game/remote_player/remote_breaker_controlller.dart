@@ -15,22 +15,22 @@ import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
   WebsocketClient? websocketClient;
-  EventQueue<Message>? buffer;
+  EventQueue<Message> buffer = EventQueue(80);
   JoystickMoveDirectional? _remoteDirection;
 
   RemoteBreaker get remote => this as RemoteBreaker;
 
   @override
-  Future<void> onLoad() {
+  void onMount() {
     websocketClient = inject();
-    buffer = EventQueue(40);
-    buffer?.listen = _listenEventBuffer;
+    buffer.listen = _listenEventBuffer;
     websocketClient?.addOnMatchDataObserser(_onDataObserver);
-    return onLoad();
+    super.onMount();
   }
 
   @override
   void onRemove() {
+    buffer.listen = null;
     websocketClient?.removeOnMatchDataObserser(_onDataObserver);
     super.onRemove();
   }
@@ -40,40 +40,32 @@ mixin RemoteBreakerControlller on SimpleEnemy {
       String dataString = String.fromCharCodes(data.data);
       final json = jsonDecode(dataString);
       Message m = Message.fromJson(json);
-      buffer?.add(m, m.date);
+      buffer.add(m, m.date);
     }
   }
 
   @override
   void update(double dt) {
-    buffer?.run(dt);
     switch (_remoteDirection) {
       case JoystickMoveDirectional.MOVE_UP:
-        moveUp();
+        moveFromDirection(Direction.up);
         break;
       case JoystickMoveDirectional.MOVE_RIGHT:
-        moveRight();
+        moveFromDirection(Direction.right);
         break;
       case JoystickMoveDirectional.MOVE_DOWN:
-        moveDown();
+        moveFromDirection(Direction.down);
         break;
       case JoystickMoveDirectional.MOVE_LEFT:
-        moveLeft();
+        moveFromDirection(Direction.left);
         break;
       case JoystickMoveDirectional.IDLE:
         _remoteDirection = null;
-        idle();
-        break;
-      case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
-        break;
-      case JoystickMoveDirectional.MOVE_DOWN_LEFT:
-        break;
-      case JoystickMoveDirectional.MOVE_UP_LEFT:
-        break;
-      case JoystickMoveDirectional.MOVE_UP_RIGHT:
+        stopMove(forceIdle: true);
         break;
       default:
     }
+    buffer.run(dt);
     super.update(dt);
   }
 
