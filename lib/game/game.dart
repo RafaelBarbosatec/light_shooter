@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:bonfire/base/bonfire_game_interface.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/decorations/poison.dart';
@@ -47,7 +48,7 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   late WebsocketClient _websocketClient;
   late ServerClient _serverClient;
-  BonfireGame? game;
+  BonfireGameInterface? game;
   String userId = '';
   @override
   void initState() {
@@ -64,9 +65,7 @@ class _GameState extends State<Game> {
       onWillPop: () => Future.value(false),
       child: BonfireWidget(
         joystick: Joystick(
-          keyboardConfig: KeyboardConfig(
-            keyboardDirectionalType: KeyboardDirectionalType.wasdAndArrows,
-          ),
+          keyboardConfig: KeyboardConfig(),
         ),
         overlayBuilderMap: {
           BarLife.name: (context, game) => BarLife(game: game),
@@ -88,36 +87,34 @@ class _GameState extends State<Game> {
         ),
         cameraConfig: CameraConfig(
           zoom: 1.5,
-          smoothCameraEnabled: true,
-          smoothCameraSpeed: 3.0,
         ),
         onReady: _onReady,
         onDispose: () => _websocketClient.leaveMatch(),
-        components: [GameWinController()],
+        components: [
+          GameWinController(),
+        ],
       ),
     );
   }
 
   void _onMatchPresence(MatchPresenceEvent data) {
-    if (game != null) {
-      for (var leave in data.leaves) {
-        game!
-            .componentsByType<RemoteBreaker>()
-            .where((element) => element.id == leave.userId)
-            .forEach((remote) => remote.removeFromParent());
-      }
+    for (var leave in data.leaves) {
+      game
+          ?.query<RemoteBreaker>()
+          .where((element) => element.id == leave.userId)
+          .forEach((remote) => remote.removeFromParent());
     }
   }
 
-  void _onReady(BonfireGame game) {
+  void _onReady(BonfireGameInterface game) {
     this.game = game;
-    for (var element in widget.properties.opponentPositions) {
+    for (var e in widget.properties.opponentPositions) {
       game.add(
         RemoteBreaker(
-          id: element.userId,
-          position: element.position * Game.tileSize,
-          color: element.customization.color,
-          name: element.name,
+          id: e.userId,
+          position: e.position * Game.tileSize,
+          color: e.customization.color,
+          name: e.name,
         ),
       );
     }

@@ -1,56 +1,56 @@
 import 'dart:math';
 
 import 'package:bonfire/bonfire.dart';
+import 'package:light_shooter/game/player/breaker.dart';
+import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class BulletCapsule extends GameComponent
-    with UseSpriteAnimation, Movement, ObjectCollision, Acceleration {
-  double reduction = 2;
+    with UseSpriteAnimation, Movement, BlockMovementCollision, HandleForces {
   bool removing = false;
 
   BulletCapsule(Vector2 position, double angle) {
     this.angle = angle;
+    this.angle = angle;
     this.position = position - Vector2.all(8);
     size = Vector2.all(16);
     speed = 100;
-    reduction = (Random().nextDouble() + 2) * -1;
-    setupCollision(
-      CollisionConfig(
-        collisions: [
-          CollisionArea.rectangle(
-            size: Vector2(5, 6),
-            align: Vector2.all(6),
-          )
-        ],
+    addForce(
+      ResistanceForce2D(
+        id: 'id',
+        value: Vector2.all(Random().nextDouble() * 2 + 3),
       ),
     );
   }
 
   @override
   Future<void>? onLoad() async {
-    animation = await PlayerSpriteSheet.bulletCapsule;
+    setAnimation(await PlayerSpriteSheet.bulletCapsule);
+    await add(
+      RectangleHitbox(
+        size: Vector2(5, 6),
+        position: Vector2.all(6),
+      ),
+    );
+    moveFromAngle(angle);
     return super.onLoad();
   }
 
   @override
-  void onMount() {
-    applyAccelerationByAngle(
-      reduction,
-      angle,
-      stopWhenSpeedZero: true,
-      onStop: _removeCapsule,
-    );
-    super.onMount();
+  void update(double dt) {
+    if (!removing && isStopped()) {
+      removing = true;
+      _removeCapsule();
+    }
+    super.update(dt);
   }
 
   @override
-  bool onCollision(GameComponent component, bool active) {
-    if (component is TileWithCollision || component is GameDecoration) {
-      speed = 0;
-      return super.onCollision(component, active);
-    } else {
+  bool onBlockMovement(Set<Vector2> intersectionPoints, GameComponent other) {
+    if (other is Breaker || other is RemoteBreaker || other is BulletCapsule) {
       return false;
     }
+    return super.onBlockMovement(intersectionPoints, other);
   }
 
   @override

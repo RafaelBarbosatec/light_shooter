@@ -5,7 +5,7 @@ import 'package:light_shooter/shared/theme/game_colors.dart';
 class GameColorSelector extends StatelessWidget {
   final PlayerColor? colorSelected;
   final ValueChanged<PlayerColor>? onChanged;
-  const GameColorSelector({super.key, this.colorSelected,this.onChanged});
+  const GameColorSelector({super.key, this.colorSelected, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class GameColorSelector extends StatelessWidget {
 
   Widget _buildItem(PlayerColor e) {
     return InkWell(
-      onTap: ()=> onChanged?.call(e),
+      onTap: () => onChanged?.call(e),
       child: Container(
         width: 40,
         height: 40,

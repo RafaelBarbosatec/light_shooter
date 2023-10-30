@@ -30,13 +30,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  bonfire: ^2.12.6
+  bonfire: ^3.0.4
   flutter_bloc: ^8.1.2
-  gif_view: ^0.3.1
+  gif_view: ^0.4.0
   nakama: 
     git:
         url: https://github.com/RafaelBarbosatec/flutter_nakama.git
-        ref: refresh-token-can-be-null
+        ref: cc832b06427f9897ce6fea254248426ee9b53790
+  get_it: ^7.6.4
 
 dev_dependencies:
   flutter_test:

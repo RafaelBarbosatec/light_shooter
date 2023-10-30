@@ -6,12 +6,14 @@ class GameTextField extends StatelessWidget {
   final bool enabled;
   final FormFieldValidator<String>? validator;
   final TextEditingController? controller;
+  final ValueChanged<String>? onFieldSubmitted;
   const GameTextField({
     super.key,
     this.controller,
     this.hint,
     this.enabled = true,
     this.validator,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -20,6 +22,7 @@ class GameTextField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       validator: validator,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,

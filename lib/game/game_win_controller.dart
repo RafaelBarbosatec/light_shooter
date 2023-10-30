@@ -9,7 +9,7 @@ class GameWinController extends GameComponent {
 
   @override
   void onMount() {
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 2), () {
       checking = true;
     });
     super.onMount();

@@ -85,11 +85,12 @@ class WebsocketClient {
     this.matched = matched;
     return _websocketClient!
         .joinMatch(matched.matchId ?? '', token: matched.token)
-        .then((value) {
-      _startListens();
-
-      return match = value;
-    });
+        .then(
+      (value) {
+        _startListens();
+        return match = value;
+      },
+    );
   }
 
   Future leaveMatch() async {
@@ -145,7 +146,7 @@ class WebsocketClient {
   }
 
   void addOnMatchDataObserser(Function(MatchData data) observer) {
-    if (_onMatchDataObservers.where((element) => element == observer).isEmpty) {
+    if (!_onMatchDataObservers.any((element) => element == observer)) {
       _onMatchDataObservers.add(observer);
     }
   }
@@ -155,9 +156,7 @@ class WebsocketClient {
   }
 
   void addOnMatchPresenceObserser(Function(MatchPresenceEvent data) observer) {
-    if (_onMatchPresenceObservers
-        .where((element) => element == observer)
-        .isEmpty) {
+    if (!_onMatchPresenceObservers.any((element) => element == observer)) {
       _onMatchPresenceObservers.add(observer);
     }
   }
