@@ -1,5 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
+import 'package:light_shooter/game/game.dart';
+import 'package:light_shooter/game/game_route.dart';
 import 'package:light_shooter/game/util/player_customization.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/pages/login/login_route.dart';

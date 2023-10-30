@@ -6,7 +6,7 @@ import 'package:light_shooter/game/player/weapons/bullet_capsule.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class BreakerCannon extends GameComponent
-    with Follower, UseSpriteAnimation, ChangeNotifier {
+    with UseSpriteAnimation, ChangeNotifier {
   double dt = 0;
   final double timeToReload = 5;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
@@ -20,29 +20,36 @@ class BreakerCannon extends GameComponent
   bool reloading = false;
   double currentTimeReload = 0;
   BreakerCannon(
+    Vector2 position,
     this.color, {
     this.withScreenEffect = true,
     this.blockShootWithoutBullet = true,
     this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY,
   }) {
+    this.position = position;
     size = Vector2.all(64);
-    setupFollower(offset: Vector2(0, 16));
   }
 
   @override
   void update(double dt) {
     this.dt = dt;
-    isFlipHorizontally =
-        (followerTarget as Movement).lastDirectionHorizontal != Direction.right;
+
+    if ((parent as Movement).lastDirectionHorizontal != Direction.right) {
+      if (!isFlippedHorizontally) {
+        flipHorizontally();
+      }
+    } else {
+      if (isFlippedHorizontally) {
+        flipHorizontally();
+      }
+    }
 
     if (reloading) {
       currentTimeReload += dt;
       if (currentTimeReload >= timeToReload) {
         reloading = false;
         _countBullet = 5;
-        animation = _normalAnimation;
-      } else {
-        animation = _reloadAnimation;
+        setAnimation(_normalAnimation);
       }
       notifyListeners();
     }
@@ -52,7 +59,8 @@ class BreakerCannon extends GameComponent
   @override
   Future<void>? onLoad() async {
     _reloadAnimation = await PlayerSpriteSheet.gunReload(color);
-    animation = _normalAnimation = await PlayerSpriteSheet.gun(color);
+    setAnimation(_normalAnimation = await PlayerSpriteSheet.gun(color));
+    anchor = Anchor.center;
     return super.onLoad();
   }
 
@@ -78,13 +86,9 @@ class BreakerCannon extends GameComponent
       angle: radAngle,
       damage: damage,
       speed: 300,
-      collision: CollisionConfig(
-        collisions: [
-          CollisionArea.rectangle(
-            size: Vector2.all(16),
-            align: Vector2.all(16) / 2,
-          )
-        ],
+      collision: RectangleHitbox(
+        size: Vector2.all(16),
+        position: Vector2.all(16) / 2,
       ),
       marginFromOrigin: -3,
       attackFrom: attackFrom,
@@ -95,11 +99,12 @@ class BreakerCannon extends GameComponent
       gameRef.colorFilter?.animateTo(Colors.transparent);
     }
 
-    gameRef.add(BulletCapsule(center, _getAnglecapsule(radAngle)));
+    gameRef.add(BulletCapsule(absoluteCenter, _getAnglecapsule(radAngle)));
     _countBullet--;
     if (_countBullet == 0) {
       currentTimeReload = 0;
       reloading = true;
+      setAnimation(_reloadAnimation);
     }
     notifyListeners();
   }
@@ -109,7 +114,7 @@ class BreakerCannon extends GameComponent
   }
 
   double calculeNewAngle(double radAngle) {
-    return radAngle + ((isFlipHorizontally && radAngle != 0) ? pi : 0);
+    return radAngle + ((isFlippedHorizontally && radAngle != 0) ? pi : 0);
   }
 
   double _getAnglecapsule(double radAngle) {

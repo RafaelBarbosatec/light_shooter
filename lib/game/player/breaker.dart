@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
@@ -8,12 +6,11 @@ import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/server_conection/messages/attack_message.dart';
 import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/die_message.dart';
-import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 
 class Breaker extends SimplePlayer
-    with ObjectCollision, MouseGesture, Lighting, ChangeNotifier {
+    with BlockMovementCollision, MouseEventListener, Lighting, ChangeNotifier {
   static const double maxLive = 100;
   BreakerCannon? gun;
   final Color flashDamage = Colors.red;
@@ -35,22 +32,33 @@ class Breaker extends SimplePlayer
           speed: 60,
           life: maxLive,
         ) {
-    enabledDiagonalMovements = false;
+    // enabledDiagonalMovements = false;
     // enableMouseGesture = enabledMouse;
-    setupCollision(
-      CollisionConfig(
-        collisions: [
-          CollisionArea.rectangle(
-            size: size / 4,
-            align: Vector2(size.y * 0.35, size.x * 0.70),
-          ),
-        ],
-      ),
-    );
+    // setupCollision(
+    //   CollisionConfig(
+    //     collisions: [
+    //       CollisionArea.rectangle(
+    //         size: size / 4,
+    //         align: Vector2(size.y * 0.35, size.x * 0.70),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   @override
-  void joystickAction(JoystickActionEvent event) {
+  Future<void> onLoad() async {
+    await add(
+      RectangleHitbox(
+        size: size / 4,
+        position: Vector2(size.y * 0.35, size.x * 0.70),
+      ),
+    );
+    return super.onLoad();
+  }
+
+  @override
+  void onJoystickAction(JoystickActionEvent event) {
     if (event.id == 1) {
       if (event.event == ActionEvent.MOVE) {
         if (gun?.reloading == false) {
@@ -72,26 +80,31 @@ class Breaker extends SimplePlayer
     if (event.id == 2 && event.event == ActionEvent.DOWN) {
       gun?.reload();
     }
-    super.joystickAction(event);
+    super.onJoystickAction(event);
   }
 
   @override
-  void joystickChangeDirectional(JoystickDirectionalEvent event) {
-    bool canSend =
-        event.directional != JoystickMoveDirectional.MOVE_DOWN_RIGHT &&
-            event.directional != JoystickMoveDirectional.MOVE_DOWN_LEFT &&
-            event.directional != JoystickMoveDirectional.MOVE_UP_LEFT &&
-            event.directional != JoystickMoveDirectional.MOVE_UP_RIGHT;
-    if (event.directional != lastSocketDirection && canSend) {
-      lastSocketDirection = event.directional;
-      sendMessage(MoveMessage(event.directional.name, position, speed));
-    }
-    super.joystickChangeDirectional(event);
+  void onJoystickChangeDirectional(JoystickDirectionalEvent event) {
+    // bool canSend =
+    //     event.directional != JoystickMoveDirectional.MOVE_DOWN_RIGHT &&
+    //         event.directional != JoystickMoveDirectional.MOVE_DOWN_LEFT &&
+    //         event.directional != JoystickMoveDirectional.MOVE_UP_LEFT &&
+    //         event.directional != JoystickMoveDirectional.MOVE_UP_RIGHT;
+    // if (event.directional != lastSocketDirection && canSend) {
+    //   lastSocketDirection = event.directional;
+    //   sendMessage(MoveMessage(event.directional.name, position, speed));
+    // }
+    super.onJoystickChangeDirectional(event);
   }
 
   @override
   void onMount() {
-    add(gun = BreakerCannon(color));
+    add(
+      gun = BreakerCannon(
+        Vector2(32, 44),
+        color,
+      ),
+    );
     super.onMount();
   }
 
@@ -114,7 +127,7 @@ class Breaker extends SimplePlayer
   @override
   void onMouseScreenTapDown(int pointer, Vector2 position, MouseButton button) {
     var angle = BonfireUtil.angleBetweenPoints(
-      gun?.center ?? center,
+      gun?.absoluteCenter ?? absoluteCenter,
       gameRef.screenToWorld(position),
     );
     if (gun?.reloading == false) {
@@ -127,7 +140,7 @@ class Breaker extends SimplePlayer
   @override
   void onMouseHoverScreen(int pointer, Vector2 position) {
     double angle = BonfireUtil.angleBetweenPoints(
-      gun?.center ?? center,
+      gun?.absoluteCenter ?? absoluteCenter,
       gameRef.screenToWorld(position),
     );
     gun?.changeAngle(angle);
@@ -135,11 +148,11 @@ class Breaker extends SimplePlayer
   }
 
   @override
-  bool onCollision(GameComponent component, bool active) {
-    if (component is RemoteBreaker) {
+  bool onBlockMovement(Set<Vector2> intersectionPoints, GameComponent other) {
+    if (other is RemoteBreaker) {
       return false;
     }
-    return super.onCollision(component, active);
+    return super.onBlockMovement(intersectionPoints, other);
   }
 
   void _sendShoot(double angle, damage) {
@@ -147,10 +160,10 @@ class Breaker extends SimplePlayer
   }
 
   void sendMessage(Message m) {
-    websocketClient.sendMatchData(
-      m.op,
-      jsonEncode(m.toJson()),
-    );
+    // websocketClient.sendMatchData(
+    //   m.op,
+    //   jsonEncode(m.toJson()),
+    // );
   }
 
   @override

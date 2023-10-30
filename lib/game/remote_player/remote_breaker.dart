@@ -1,14 +1,10 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
-import 'package:light_shooter/game/remote_player/remote_breaker_controlller.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
 class RemoteBreaker extends SimpleEnemy
-    with
-        ObjectCollision,
-        UseBarLife,
-        UseStateController<RemoteBreakerControlller> {
+    with BlockMovementCollision, UseLifeBar {
   BreakerCannon? gun;
   final String id;
   final PlayerColor color;
@@ -24,28 +20,40 @@ class RemoteBreaker extends SimpleEnemy
           animation: PlayerSpriteSheet.animation(color),
           speed: 60,
         ) {
-    setupCollision(
-      CollisionConfig(
-        collisions: [
-          CollisionArea.rectangle(
-            size: size / 4,
-            align: Vector2(size.y * 0.35, size.x * 0.70),
-          ),
-        ],
-      ),
-    );
+    // setupCollision(
+    //   CollisionConfig(
+    //     collisions: [
+    //       CollisionArea.rectangle(
+    //         size: size / 4,
+    //         align: Vector2(size.y * 0.35, size.x * 0.70),
+    //       ),
+    //     ],
+    //   ),
+    // );
 
-    setupBarLife(
+    setupLifeBar(
       size: Vector2(width / 2, 6),
       borderRadius: BorderRadius.circular(10),
-      barLifePosition: BarLifePorition.bottom,
+      barLifeDrawPosition: BarLifeDrawPorition.bottom,
     );
+  }
+
+  @override
+  Future<void> onLoad() async {
+    await add(
+      RectangleHitbox(
+        size: size / 4,
+        position: Vector2(size.y * 0.35, size.x * 0.70),
+      ),
+    );
+    return super.onLoad();
   }
 
   @override
   void onMount() {
     add(
       gun = BreakerCannon(
+        Vector2(32, 44),
         color,
         withScreenEffect: false,
         blockShootWithoutBullet: false,
@@ -56,8 +64,7 @@ class RemoteBreaker extends SimpleEnemy
   }
 
   @override
-  void receiveDamage(AttackFromEnum attacker, double damage, identify) {
-  }
+  void receiveDamage(AttackFromEnum attacker, double damage, identify) {}
 
   @override
   void die() {
