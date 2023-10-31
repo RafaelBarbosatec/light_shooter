@@ -15,7 +15,7 @@ import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
   WebsocketClient? websocketClient;
-  EventQueue<Message> buffer = EventQueue(150);
+  EventQueue<Message> buffer = EventQueue(50);
 
   RemoteBreaker get remote => this as RemoteBreaker;
 
@@ -82,7 +82,7 @@ mixin RemoteBreakerControlller on SimpleEnemy {
     }
     _execDirection(remoteDirection);
 
-    if (position.distanceTo(move.position) > width / 4) {
+    if (position.distanceTo(move.position) > width / 6) {
       add(MoveEffect.to(move.position, EffectController(duration: 0.2)));
     }
   }

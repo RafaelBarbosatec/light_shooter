@@ -52,7 +52,7 @@ class EventQueue<T> {
 
   void add(T value, DateTime time) {
     if (isEmpty()) {
-      _add(Delay(delay));
+      _add(Delay(delay * 2));
       _add(Frame<T>(value, time));
       _current = _timeLine.first;
     } else {
