@@ -71,14 +71,15 @@ class _GameState extends State<Game> {
       child: BonfireWidget(
         joystick: Joystick(
           keyboardConfig: KeyboardConfig(),
-          directional: widget.enabledMouse ? null : JoystickDirectional(),
+          directional:
+              widget.enabledMouse ? null : JoystickDirectional(isFixed: false),
           actions: widget.enabledMouse
               ? []
               : [
                   JoystickAction(
                     actionId: 1,
                     enableDirection: true,
-                    margin: const EdgeInsets.all(50),
+                    margin: const EdgeInsets.all(100),
                   ),
                 ],
         ),
