@@ -19,10 +19,13 @@ class Breaker extends SimplePlayer
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
   double gunDamage = 25;
-  WebsocketClient websocketClient;
-  JoystickMoveDirectional? lastSocketDirection;
+  final WebsocketClient websocketClient;
+  Direction? lastSocketDirection;
   final PlayerColor color;
   final String name;
+  final lineGunPaint = Paint()
+    ..color = Colors.blue.withOpacity(0.2)
+    ..strokeWidth = 3;
   Breaker({
     required super.position,
     required this.websocketClient,
@@ -35,6 +38,7 @@ class Breaker extends SimplePlayer
           speed: 60,
           life: maxLive,
         ) {
+    enableMouseGesture = enabledMouse;
     setupMovementByJoystick(diagonalEnabled: false);
   }
 
@@ -50,38 +54,54 @@ class Breaker extends SimplePlayer
   }
 
   @override
+  void update(double dt) {
+    if (!isIdle) {
+      if (lastDirection != lastSocketDirection) {
+        lastSocketDirection = lastDirection;
+        sendMessage(MoveMessage(lastDirection.name, position, speed));
+      } else if (checkInterval('sendDirection', 300, dt)) {
+        sendMessage(MoveMessage(lastDirection.name, position, speed));
+      }
+    }
+    super.update(dt);
+  }
+
+  @override
+  void idle() {
+    sendMessage(MoveMessage('idle', position, speed));
+    super.idle();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    if (gun?.radAngle != 0) {
+      final p1 = gun!.center.toOffset();
+      final p2 = BonfireUtil.movePointByAngle(gun!.center, 800, gun!.radAngle)
+          .toOffset();
+
+      canvas.drawLine(p1, p2, lineGunPaint);
+    }
+    super.render(canvas);
+  }
+
+  @override
   void onJoystickAction(JoystickActionEvent event) {
     if (event.id == 1) {
       if (event.event == ActionEvent.MOVE) {
-        if (gun?.reloading == false) {
-          bool shoot = gun?.execShootAndChangeAngle(
-                event.radAngle,
-                gunDamage,
-              ) ??
-              false;
-          if (shoot) {
-            _sendShootMessage(event.radAngle, gunDamage);
-          }
-        }
+        gun?.changeAngle(event.radAngle);
       }
       if (event.event == ActionEvent.UP) {
+        if (gun?.reloading == false) {
+          gun?.execShoot(gunDamage);
+          _sendShootMessage(gun!.radAngle, gunDamage);
+        }
         gun?.changeAngle(0);
-        _sendShootMessage(0, 0);
       }
     }
     if (event.id == 2 && event.event == ActionEvent.DOWN) {
       gun?.reload();
     }
     super.onJoystickAction(event);
-  }
-
-  @override
-  void onJoystickChangeDirectional(JoystickDirectionalEvent event) {
-    if (event.directional != lastSocketDirection) {
-      lastSocketDirection = event.directional;
-      sendMessage(MoveMessage(event.directional.name, position, speed));
-    }
-    super.onJoystickChangeDirectional(event);
   }
 
   @override
@@ -113,7 +133,7 @@ class Breaker extends SimplePlayer
       gameRef.screenToWorld(position),
     );
     if (gun?.reloading == false) {
-      gun?.execShoot(angle, gunDamage);
+      gun?.execShoot(gunDamage);
       _sendShootMessage(angle, gunDamage);
     }
     super.onMouseScreenTapDown(pointer, position, button);
