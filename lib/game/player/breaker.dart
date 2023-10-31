@@ -19,8 +19,8 @@ class Breaker extends SimplePlayer
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
   double gunDamage = 25;
-  WebsocketClient websocketClient;
-  JoystickMoveDirectional? lastSocketDirection;
+  final WebsocketClient websocketClient;
+  Direction? lastSocketDirection;
   final PlayerColor color;
   final String name;
   final lineGunPaint = Paint()
@@ -38,7 +38,7 @@ class Breaker extends SimplePlayer
           speed: 60,
           life: maxLive,
         ) {
-    enableMouseGesture = false;
+    enableMouseGesture = enabledMouse;
     setupMovementByJoystick(diagonalEnabled: false);
   }
 
@@ -51,6 +51,25 @@ class Breaker extends SimplePlayer
       ),
     );
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    if (!isIdle) {
+      if (lastDirection != lastSocketDirection) {
+        lastSocketDirection = lastDirection;
+        sendMessage(MoveMessage(lastDirection.name, position, speed));
+      } else if (checkInterval('sendDirection', 300, dt)) {
+        sendMessage(MoveMessage(lastDirection.name, position, speed));
+      }
+    }
+    super.update(dt);
+  }
+
+  @override
+  void idle() {
+    sendMessage(MoveMessage('idle', position, speed));
+    super.idle();
   }
 
   @override
@@ -83,15 +102,6 @@ class Breaker extends SimplePlayer
       gun?.reload();
     }
     super.onJoystickAction(event);
-  }
-
-  @override
-  void onJoystickChangeDirectional(JoystickDirectionalEvent event) {
-    if (event.directional != lastSocketDirection) {
-      lastSocketDirection = event.directional;
-      sendMessage(MoveMessage(event.directional.name, position, speed));
-    }
-    super.onJoystickChangeDirectional(event);
   }
 
   @override

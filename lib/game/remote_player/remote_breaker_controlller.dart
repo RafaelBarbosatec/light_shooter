@@ -15,8 +15,7 @@ import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
   WebsocketClient? websocketClient;
-  EventQueue<Message> buffer = EventQueue(50);
-  JoystickMoveDirectional? _remoteDirection;
+  EventQueue<Message> buffer = EventQueue(150);
 
   RemoteBreaker get remote => this as RemoteBreaker;
 
@@ -46,25 +45,6 @@ mixin RemoteBreakerControlller on SimpleEnemy {
 
   @override
   void update(double dt) {
-    switch (_remoteDirection) {
-      case JoystickMoveDirectional.MOVE_UP:
-        moveFromDirection(Direction.up);
-        break;
-      case JoystickMoveDirectional.MOVE_RIGHT:
-        moveFromDirection(Direction.right);
-        break;
-      case JoystickMoveDirectional.MOVE_DOWN:
-        moveFromDirection(Direction.down);
-        break;
-      case JoystickMoveDirectional.MOVE_LEFT:
-        moveFromDirection(Direction.left);
-        break;
-      case JoystickMoveDirectional.IDLE:
-        _remoteDirection = null;
-        stopMove(forceIdle: true);
-        break;
-      default:
-    }
     buffer.run(dt);
     super.update(dt);
   }
@@ -90,11 +70,21 @@ mixin RemoteBreakerControlller on SimpleEnemy {
 
   void _doMove(Message value) {
     final move = MoveMessage.fromMessage(value);
-    _remoteDirection = JoystickMoveDirectional.values.firstWhere(
-      (element) => element.name == move.direction,
-    );
-    speed = move.speed;
-    position = move.position;
+    Direction? remoteDirection;
+    try {
+      remoteDirection = Direction.values.firstWhere(
+        (element) => element.name == move.direction,
+      );
+      speed = move.speed;
+    } catch (e) {
+      //idle
+      stopMove(forceIdle: true);
+    }
+    _execDirection(remoteDirection);
+
+    if (position.distanceTo(move.position) > width / 4) {
+      add(MoveEffect.to(move.position, EffectController(duration: 0.2)));
+    }
   }
 
   void _doAttack(Message value) {
@@ -114,5 +104,23 @@ mixin RemoteBreakerControlller on SimpleEnemy {
       config: const TextStyle(fontSize: 14, color: Colors.red),
     );
     removeLife(msg.damage);
+  }
+
+  void _execDirection(Direction? remoteDirection) {
+    switch (remoteDirection) {
+      case Direction.up:
+        moveFromDirection(Direction.up);
+        break;
+      case Direction.right:
+        moveFromDirection(Direction.right);
+        break;
+      case Direction.down:
+        moveFromDirection(Direction.down);
+        break;
+      case Direction.left:
+        moveFromDirection(Direction.left);
+        break;
+      default:
+    }
   }
 }

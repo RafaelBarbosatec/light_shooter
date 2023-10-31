@@ -39,7 +39,12 @@ class GameProperties {
 class Game extends StatefulWidget {
   static const tileSize = 32.0;
   final GameProperties properties;
-  const Game({Key? key, required this.properties}) : super(key: key);
+  final bool enabledMouse;
+  const Game({
+    Key? key,
+    required this.properties,
+    this.enabledMouse = false,
+  }) : super(key: key);
 
   @override
   State<Game> createState() => _GameState();
@@ -66,14 +71,16 @@ class _GameState extends State<Game> {
       child: BonfireWidget(
         joystick: Joystick(
           keyboardConfig: KeyboardConfig(),
-          directional: JoystickDirectional(),
-          actions: [
-            JoystickAction(
-              actionId: 1,
-              enableDirection: true,
-              margin: const EdgeInsets.all(50),
-            ),
-          ],
+          directional: widget.enabledMouse ? null : JoystickDirectional(),
+          actions: widget.enabledMouse
+              ? []
+              : [
+                  JoystickAction(
+                    actionId: 1,
+                    enableDirection: true,
+                    margin: const EdgeInsets.all(50),
+                  ),
+                ],
         ),
         overlayBuilderMap: {
           BarLife.name: (context, game) => BarLife(game: game),
@@ -92,6 +99,7 @@ class _GameState extends State<Game> {
           color: widget.properties.myProperties.customization.color,
           name: widget.properties.myProperties.name,
           websocketClient: _websocketClient,
+          enabledMouse: widget.enabledMouse,
         ),
         cameraConfig: CameraConfig(
           zoom: 1.5,
