@@ -47,12 +47,12 @@ class EventQueue<T> {
   Timeline<T>? _current;
 
   EventQueue(this.delay, {this.bufferSize = 40}) {
-    _timeLine = List.filled(bufferSize, Empty());
+    _timeLine = List.filled(bufferSize, Empty(), growable: false);
   }
 
   void add(T value, DateTime time) {
     if (isEmpty()) {
-      _add(Delay(delay * 2));
+      _add(Delay(delay));
       _add(Frame<T>(value, time));
       _current = _timeLine.first;
     } else {
@@ -60,13 +60,7 @@ class EventQueue<T> {
       int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
       if (lastFrame.timeRun == null) {
         _add(Delay(delayLastFrame));
-      } else {
-        int timeExecuted = lastFrame.differenceTimeRun;
-        int delay = delayLastFrame - timeExecuted;
-        if (delay > 0) {
-          _add(Delay(delay <= this.delay ? delay : 0));
-        }
-      }
+      } 
       _add(Frame(value, time));
     }
   }

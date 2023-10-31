@@ -15,7 +15,7 @@ import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
   WebsocketClient? websocketClient;
-  EventQueue<Message> buffer = EventQueue(50);
+  EventQueue<Message> buffer = EventQueue(100);
 
   RemoteBreaker get remote => this as RemoteBreaker;
 
