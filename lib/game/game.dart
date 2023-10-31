@@ -103,7 +103,7 @@ class _GameState extends State<Game> {
           enabledMouse: widget.enabledMouse,
         ),
         cameraConfig: CameraConfig(
-          zoom: 1.5,
+          zoom: getZoomFromMaxVisibleTile(context, 20, 30),
         ),
         onReady: _onReady,
         onDispose: () => _websocketClient.leaveMatch(),
