@@ -66,6 +66,14 @@ class _GameState extends State<Game> {
       child: BonfireWidget(
         joystick: Joystick(
           keyboardConfig: KeyboardConfig(),
+          directional: JoystickDirectional(),
+          actions: [
+            JoystickAction(
+              actionId: 1,
+              enableDirection: true,
+              margin: const EdgeInsets.all(50),
+            ),
+          ],
         ),
         overlayBuilderMap: {
           BarLife.name: (context, game) => BarLife(game: game),

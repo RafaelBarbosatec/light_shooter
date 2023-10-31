@@ -10,9 +10,10 @@ final getIt = GetIt.instance;
 T inject<T extends Object>() => getIt.get<T>();
 
 class Bootstrap {
+  
   static run() {
-    getIt.registerLazySingleton(() => ServerClient());
-    getIt.registerLazySingleton(() => WebsocketClient());
+    getIt.registerLazySingleton(() => ServerClient(host: '192.168.0.11'));
+    getIt.registerLazySingleton(() => WebsocketClient(host: '192.168.0.11'));
     // getIt.registerFactory(() => RemoteBreakerControlller(getIt.get()));
     getIt.registerFactory(() => LoginBloc(getIt.get(), getIt.get()));
     getIt.registerFactory(() => RoomMatchBloc(getIt.get(), getIt.get()));

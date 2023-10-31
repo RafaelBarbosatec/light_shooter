@@ -64,16 +64,7 @@ class BreakerCannon extends GameComponent
     return super.onLoad();
   }
 
-  bool execShootAndChangeAngle(double radAngle, double damage) {
-    changeAngle(radAngle);
-    if (checkInterval('SHOOT_INTERVAL', 500, dt)) {
-      execShoot(radAngle, damage);
-      return true;
-    }
-    return false;
-  }
-
-  void execShoot(double radAngle, double damage) {
+  void execShoot(double damage) {
     if (_countBullet <= 0 && blockShootWithoutBullet) {
       return;
     }
@@ -94,7 +85,10 @@ class BreakerCannon extends GameComponent
       attackFrom: attackFrom,
     );
     if (withScreenEffect) {
-      gameRef.camera.shake(intensity: 1);
+      gameRef.camera.shake(
+        intensity: 1,
+        duration: const Duration(milliseconds: 100),
+      );
       gameRef.colorFilter?.config.color = flash;
       gameRef.colorFilter?.animateTo(Colors.transparent);
     }
@@ -109,7 +103,10 @@ class BreakerCannon extends GameComponent
     notifyListeners();
   }
 
+  double radAngle = 0;
+
   void changeAngle(double radAngle) {
+    this.radAngle = radAngle;
     angle = calculeNewAngle(radAngle);
   }
 

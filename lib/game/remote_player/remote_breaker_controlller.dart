@@ -15,7 +15,7 @@ import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {
   WebsocketClient? websocketClient;
-  EventQueue<Message> buffer = EventQueue(80);
+  EventQueue<Message> buffer = EventQueue(50);
   JoystickMoveDirectional? _remoteDirection;
 
   RemoteBreaker get remote => this as RemoteBreaker;
@@ -101,8 +101,10 @@ mixin RemoteBreakerControlller on SimpleEnemy {
     final attack = AttackMessage.fromMessage(value);
     remote.gun?.changeAngle(attack.angle);
     if (attack.damage > 0) {
-      remote.gun?.execShoot(attack.angle, attack.damage);
+      remote.gun?.changeAngle(attack.angle);
+      remote.gun?.execShoot(attack.damage);
     }
+    remote.gun?.changeAngle(0);
   }
 
   void _doReceiveDamage(Message value) {
