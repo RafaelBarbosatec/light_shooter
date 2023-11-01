@@ -106,14 +106,12 @@ class PlayerSpriteSheet {
         ),
       );
 
-  static Future<SpriteAnimation> get bulletCapsule => SpriteAnimation.load(
+
+
+  static Future<Sprite> get bulletCapsule => Sprite.load(
         'bullet_blue.png',
-        SpriteAnimationData.sequenced(
-          amount: 1,
-          stepTime: 0.1,
-          textureSize: Vector2.all(16),
-          texturePosition: Vector2(0, 16),
-        ),
+        srcSize: Vector2.all(16),
+        srcPosition: Vector2(0, 16),
       );
 
   static SimpleDirectionAnimation animation(PlayerColor color) =>

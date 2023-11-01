@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/bullet_capsule.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
-class BreakerCannon extends GameComponent
-    with UseSpriteAnimation, ChangeNotifier {
+class BreakerCannon extends GameDecoration with ChangeNotifier {
   double dt = 0;
   final double timeToReload = 5;
   final Color flash = const Color(0xFF73eff7).withOpacity(0.5);
@@ -25,10 +24,11 @@ class BreakerCannon extends GameComponent
     this.withScreenEffect = true,
     this.blockShootWithoutBullet = true,
     this.attackFrom = AttackFromEnum.PLAYER_OR_ALLY,
-  }) {
-    this.position = position;
-    size = Vector2.all(64);
-  }
+  }) : super.withAnimation(
+          animation: PlayerSpriteSheet.gun(color),
+          position: position,
+          size: Vector2.all(64),
+        );
 
   @override
   void update(double dt) {
@@ -57,9 +57,9 @@ class BreakerCannon extends GameComponent
   }
 
   @override
-  Future<void>? onLoad() async {
+  Future<void> onLoad() async {
     _reloadAnimation = await PlayerSpriteSheet.gunReload(color);
-    setAnimation(_normalAnimation = await PlayerSpriteSheet.gun(color));
+    _normalAnimation = await PlayerSpriteSheet.gun(color);
     anchor = Anchor.center;
     return super.onLoad();
   }
@@ -93,7 +93,12 @@ class BreakerCannon extends GameComponent
       gameRef.colorFilter?.animateTo(Colors.transparent);
     }
 
-    gameRef.add(BulletCapsule(absoluteCenter, _getAnglecapsule(radAngle)));
+    gameRef.add(
+      BulletCapsule(
+        absoluteCenter,
+        _getAnglecapsule(radAngle),
+      ),
+    );
     _countBullet--;
     if (_countBullet == 0) {
       currentTimeReload = 0;

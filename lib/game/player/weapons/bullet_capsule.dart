@@ -5,28 +5,29 @@ import 'package:light_shooter/game/player/breaker.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 
-class BulletCapsule extends GameComponent
-    with UseSpriteAnimation, Movement, BlockMovementCollision, HandleForces {
+class BulletCapsule extends GameDecoration
+    with Movement, BlockMovementCollision, HandleForces {
   bool removing = false;
 
-  BulletCapsule(Vector2 position, double angle) {
+  BulletCapsule(Vector2 p, double angle)
+      : super.withSprite(
+          sprite: PlayerSpriteSheet.bulletCapsule,
+          position: p,
+          size: Vector2.all(16),
+        ) {
     this.angle = angle;
-    this.angle = angle;
-    this.position = position - Vector2.all(8);
-    size = Vector2.all(16);
     speed = 100;
     movementOnlyVisible = false;
     addForce(
       ResistanceForce2D(
         id: 'id',
-        value: Vector2.all(Random().nextDouble() * 2 + 3),
+        value: Vector2.all(Random().nextDouble() * 3 + 2),
       ),
     );
   }
 
   @override
-  Future<void>? onLoad() async {
-    setAnimation(await PlayerSpriteSheet.bulletCapsule);
+  Future<void> onLoad() async {
     await add(
       RectangleHitbox(
         size: Vector2(5, 6),
