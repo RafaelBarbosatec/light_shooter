@@ -39,7 +39,6 @@ class Breaker extends SimplePlayer
           life: maxLive,
         ) {
     enableMouseGesture = enabledMouse;
-    setupMovementByJoystick(diagonalEnabled: false);
   }
 
   @override

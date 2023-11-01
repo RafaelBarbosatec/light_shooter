@@ -15,6 +15,7 @@ class BulletCapsule extends GameComponent
     this.position = position - Vector2.all(8);
     size = Vector2.all(16);
     speed = 100;
+    movementOnlyVisible = false;
     addForce(
       ResistanceForce2D(
         id: 'id',

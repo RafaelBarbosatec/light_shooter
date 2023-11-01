@@ -35,6 +35,7 @@ class GameWinController extends GameComponent {
   }
 
   void _showDialog(BuildContext context, GameDialogTypeEnum type) {
+    gameRef.pauseEngine();
     GameDialog.show(
       context,
       type,

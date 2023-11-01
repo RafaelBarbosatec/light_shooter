@@ -107,20 +107,8 @@ mixin RemoteBreakerControlller on SimpleEnemy {
   }
 
   void _execDirection(Direction? remoteDirection) {
-    switch (remoteDirection) {
-      case Direction.up:
-        moveFromDirection(Direction.up);
-        break;
-      case Direction.right:
-        moveFromDirection(Direction.right);
-        break;
-      case Direction.down:
-        moveFromDirection(Direction.down);
-        break;
-      case Direction.left:
-        moveFromDirection(Direction.left);
-        break;
-      default:
+    if (remoteDirection != null) {
+      moveFromDirection(remoteDirection);
     }
   }
 }

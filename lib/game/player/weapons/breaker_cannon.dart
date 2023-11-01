@@ -87,7 +87,7 @@ class BreakerCannon extends GameComponent
     if (withScreenEffect) {
       gameRef.camera.shake(
         intensity: 1,
-        duration: const Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 200),
       );
       gameRef.colorFilter?.config.color = flash;
       gameRef.colorFilter?.animateTo(Colors.transparent);
