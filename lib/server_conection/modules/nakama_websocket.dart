@@ -7,7 +7,7 @@ import 'dart:math';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
 
-class WebsocketClient {
+class NakamaWebsocket {
   static const PARAM_NUMBER_POSITION = 'numberPosition';
   final String host;
   NakamaWebsocketClient? _websocketClient;
@@ -20,7 +20,7 @@ class WebsocketClient {
   StreamSubscription? onMatchDataSubscription;
   StreamSubscription? onMatchPresenceSubscription;
 
-  WebsocketClient({this.host = '127.0.0.1'});
+  NakamaWebsocket({this.host = '127.0.0.1'});
 
   void init(Session session) {
     _websocketClient = NakamaWebsocketClient.init(

@@ -8,8 +8,8 @@ import 'package:light_shooter/game/interface/bar_life.dart';
 import 'package:light_shooter/game/player/breaker.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker.dart';
 import 'package:light_shooter/game/util/player_customization.dart';
-import 'package:light_shooter/server_conection/server_client.dart';
-import 'package:light_shooter/server_conection/websocket_client.dart';
+import 'package:light_shooter/server_conection/modules/nakama_websocket.dart';
+import 'package:light_shooter/server_conection/nakama_service.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 // ignore: depend_on_referenced_packages
 import 'package:nakama/nakama.dart';
@@ -51,15 +51,15 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
-  late WebsocketClient _websocketClient;
-  late ServerClient _serverClient;
+  late NakamaWebsocket _websocketClient;
+  late NakamaService _serverClient;
   BonfireGameInterface? game;
   String userId = '';
   @override
   void initState() {
     _serverClient = inject();
-    _websocketClient = inject();
-    userId = _serverClient.getSession().userId;
+    _websocketClient = _serverClient.websocket();
+    userId = _serverClient.auth().getSession().userId;
     _websocketClient.addOnMatchPresenceObserser(_onMatchPresence);
     super.initState();
   }
@@ -137,6 +137,7 @@ class _GameState extends State<Game> {
           position: e.position * Game.tileSize,
           color: e.customization.color,
           name: e.name,
+          websocket: _websocketClient,
         ),
       );
     }

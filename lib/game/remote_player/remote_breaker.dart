@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:light_shooter/game/player/weapons/breaker_cannon.dart';
 import 'package:light_shooter/game/remote_player/remote_breaker_controlller.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
+import 'package:light_shooter/server_conection/modules/nakama_websocket.dart';
 
 class RemoteBreaker extends SimpleEnemy
     with BlockMovementCollision, UseLifeBar, RemoteBreakerControlller {
@@ -10,11 +11,13 @@ class RemoteBreaker extends SimpleEnemy
   final String id;
   final PlayerColor color;
   final String name;
+  final NakamaWebsocket websocket;
 
   RemoteBreaker({
     required this.id,
     required super.position,
     required this.color,
+    required this.websocket,
     this.name = '',
   }) : super(
           size: Vector2.all(64),

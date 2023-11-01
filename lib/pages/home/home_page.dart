@@ -4,7 +4,7 @@ import 'package:light_shooter/game/util/player_customization.dart';
 import 'package:light_shooter/game/util/player_spritesheet.dart';
 import 'package:light_shooter/pages/login/login_route.dart';
 import 'package:light_shooter/pages/room_match/room_match_route.dart';
-import 'package:light_shooter/server_conection/server_client.dart';
+import 'package:light_shooter/server_conection/nakama_service.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
 import 'package:light_shooter/shared/theme/game_colors.dart';
 import 'package:light_shooter/shared/widgets/game_button.dart';
@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late ServerClient _serverClient;
+  late NakamaService _serverClient;
 
   PlayerCustomization customization = const PlayerCustomization();
 
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Center(
                   child: FutureBuilder<Account?>(
-                    future: _serverClient.getAccount(),
+                    future: _serverClient.auth().getAccount(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Text(
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _logout() async {
-    await _serverClient.logout().catchError((e) {});
+    await _serverClient.auth().logout().catchError((e) {});
     if (mounted) {
       LoginRoute.open(context);
     }

@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:light_shooter/game/game.dart';
 import 'package:light_shooter/game/util/player_customization.dart';
-import 'package:light_shooter/server_conection/server_client.dart';
-import 'package:light_shooter/server_conection/websocket_client.dart';
+import 'package:light_shooter/server_conection/modules/nakama_websocket.dart';
+import 'package:light_shooter/server_conection/nakama_service.dart';
 // ignore: implementation_imports
 import 'package:nakama/src/models/matchmaker.dart';
 
@@ -14,8 +14,7 @@ part 'room_match_event.dart';
 part 'room_match_state.dart';
 
 class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
-  final WebsocketClient _websocketClient;
-  final ServerClient _serverClient;
+  final NakamaService _serverClient;
 
   List<Vector2> positionsToBorn = [
     Vector2(3, 3),
@@ -23,8 +22,7 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
   ];
 
   StreamSubscription? subscription;
-  RoomMatchBloc(this._websocketClient, this._serverClient)
-      : super(const RoomMatchState()) {
+  RoomMatchBloc(this._serverClient) : super(const RoomMatchState()) {
     on<InitScreenEvent>(_onInitScreenEvent);
     on<MatchedEvent>(_onMatchedEvent);
     on<CancelMatchMakerEvent>(_onCancelMatchMaker);
@@ -35,10 +33,12 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
     InitScreenEvent event,
     Emitter<RoomMatchState> emit,
   ) async {
-    subscription = _websocketClient.listenMatchmaker().listen((matched) {
+    subscription =
+        _serverClient.websocket().listenMatchmaker().listen((matched) {
       add(MatchedEvent(matched));
     });
-    await _websocketClient
+    await _serverClient
+        .websocket()
         .createMatchMaker(propertiers: event.custom.toMap())
         .then((value) {
       emit(state.copyWith(ticket: value.ticket));
@@ -50,7 +50,7 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
     Emitter<RoomMatchState> emit,
   ) async {
     GameProperties properties = _getGameProperties(event.matched);
-    await _websocketClient.joinMatch(event.matched).then((value) {
+    await _serverClient.websocket().joinMatch(event.matched).then((value) {
       add(CancelMatchMakerEvent(withPop: false));
       emit(state.copyWith(gameProperties: properties));
     });
@@ -60,7 +60,7 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
     CancelMatchMakerEvent event,
     Emitter<RoomMatchState> emit,
   ) async {
-    await _websocketClient.exitMatchmaker().catchError((e) {});
+    await _serverClient.websocket().exitMatchmaker().catchError((e) {});
     emit(state.copyWith(goBack: event.withPop));
   }
 
@@ -72,7 +72,7 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
   }
 
   GameProperties _getGameProperties(MatchmakerMatched event) {
-    String userId = _serverClient.getSession().userId;
+    String userId = _serverClient.auth().getSession().userId;
     List<MatchmakerUser> users = event.users.toList();
     PlayerPropertie myProperties = PlayerPropertie(
       position: Vector2.zero(),
@@ -83,9 +83,9 @@ class RoomMatchBloc extends Bloc<RoomMatchEvent, RoomMatchState> {
     users.sort(
       (a, b) {
         double firstNumber =
-            a.numericProperties[WebsocketClient.PARAM_NUMBER_POSITION] ?? 0.0;
+            a.numericProperties[NakamaWebsocket.PARAM_NUMBER_POSITION] ?? 0.0;
         double secondNumber =
-            b.numericProperties[WebsocketClient.PARAM_NUMBER_POSITION] ?? 0.0;
+            b.numericProperties[NakamaWebsocket.PARAM_NUMBER_POSITION] ?? 0.0;
         return firstNumber.compareTo(secondNumber);
       },
     );

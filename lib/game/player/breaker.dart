@@ -10,7 +10,7 @@ import 'package:light_shooter/server_conection/messages/base/message.dart';
 import 'package:light_shooter/server_conection/messages/die_message.dart';
 import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
-import 'package:light_shooter/server_conection/websocket_client.dart';
+import 'package:light_shooter/server_conection/modules/nakama_websocket.dart';
 
 class Breaker extends SimplePlayer
     with BlockMovementCollision, MouseEventListener, Lighting, ChangeNotifier {
@@ -19,7 +19,7 @@ class Breaker extends SimplePlayer
   final Color flashDamage = Colors.red;
   final bool enabledMouse;
   double gunDamage = 25;
-  final WebsocketClient websocketClient;
+  final NakamaWebsocket websocketClient;
   Direction? lastSocketDirection;
   final PlayerColor color;
   final String name;
