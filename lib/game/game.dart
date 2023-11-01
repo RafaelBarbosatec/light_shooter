@@ -43,7 +43,7 @@ class Game extends StatefulWidget {
   const Game({
     Key? key,
     required this.properties,
-    this.enabledMouse = true,
+    this.enabledMouse = false,
   }) : super(key: key);
 
   @override
@@ -71,15 +71,20 @@ class _GameState extends State<Game> {
       child: BonfireWidget(
         joystick: Joystick(
           keyboardConfig: KeyboardConfig(),
-          directional:
-              widget.enabledMouse ? null : JoystickDirectional(isFixed: false),
+          directional: widget.enabledMouse
+              ? null
+              : JoystickDirectional(
+                  isFixed: false,
+                  size: 100,
+                ),
           actions: widget.enabledMouse
               ? []
               : [
                   JoystickAction(
                     actionId: 1,
                     enableDirection: true,
-                    margin: const EdgeInsets.all(100),
+                    margin: const EdgeInsets.all(80),
+                    size: 60,
                   ),
                 ],
         ),
