@@ -10,7 +10,7 @@ import 'package:light_shooter/server_conection/messages/move_message.dart';
 import 'package:light_shooter/server_conection/messages/receive_damage_message.dart';
 import 'package:light_shooter/server_conection/websocket_client.dart';
 import 'package:light_shooter/shared/bootstrap.dart';
-import 'package:light_shooter/shared/util/buffer_delay.dart';
+import 'package:light_shooter/shared/util/event_queue.dart';
 import 'package:nakama/nakama.dart';
 
 mixin RemoteBreakerControlller on SimpleEnemy {

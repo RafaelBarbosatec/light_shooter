@@ -43,7 +43,7 @@ class Game extends StatefulWidget {
   const Game({
     Key? key,
     required this.properties,
-    this.enabledMouse = false,
+    this.enabledMouse = true,
   }) : super(key: key);
 
   @override

@@ -60,7 +60,13 @@ class EventQueue<T> {
       int delayLastFrame = time.difference(lastFrame.time).inMilliseconds;
       if (lastFrame.timeRun == null) {
         _add(Delay(delayLastFrame));
-      } 
+      } else {
+        int timeExecuted = lastFrame.differenceTimeRun;
+        int delay = delayLastFrame - timeExecuted;
+        if (delay > 0) {
+          _add(Delay(delay <= this.delay ? delay : 0));
+        }
+      }
       _add(Frame(value, time));
     }
   }
